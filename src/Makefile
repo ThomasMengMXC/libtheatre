@@ -7,7 +7,7 @@ all: libtheatre.so /usr/local/include/theatre
 /usr/local/include/theatre:
 	sudo mkdir /usr/local/include/theatre
 
-libtheatre.so: stage.o scene.o screen.o layer.o sprite.o /usr/local/include/theatre
+libtheatre.so: stage.o scene.o screen.o layer.o sprite.o colour.o /usr/local/include/theatre
 	$(CC) -shared -o libtheatre.so *.o -lm
 	sudo cp libtheatre.so /usr/local/lib
 	sudo cp *.h /usr/local/include/theatre
@@ -26,6 +26,9 @@ layer.o: layer.c layer.h sprite.h
 
 sprite.o: sprite.c sprite.h
 	$(CC) $(CFLAGS) -fPIC -c sprite.c
+
+colour.o: colour.c
+	$(CC) $(CFLAGS) -fPIC -c colour.c
 
 clean: /usr/local/include/theatre
 	rm *.o

@@ -18,7 +18,8 @@ int activate_colour(Layer **layer, short y, short x, char colourLayer);
 int deactivate_colour(Layer **layer, short y, short x, char colourLayer);
 int draw_icon(Layer **layer, short y, short x, char iconLayer);
 
-void add_colour_to_layer(Layer *layer, short y, short x, Colour colour);
+void add_colour_to_layer(Layer *layer, short y, short x,
+		uint8_t r, uint8_t g, uint8_t b);
 void remove_colour_from_layer(Layer *layer, short y, short x);
 
 void add_icon_to_layer(Layer *layer, short y, short x, char *icon);

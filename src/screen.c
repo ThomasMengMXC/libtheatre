@@ -60,6 +60,9 @@ void free_screen(Screen *scr) {
 Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 		short yLength, short xLength) {
 	scr->depth++;
+	if (yLength == 0) {yLength = scr->yLength;}
+	if (xLength == 0) {xLength = scr->xLength;}
+
 	scr->layer = realloc(scr->layer, sizeof(Layer *) * scr->depth);
 	scr->layer[scr->depth - 1] = init_layer(yOffset, xOffset, yLength, xLength);
 	return scr->layer[scr->depth - 1];

@@ -1,8 +1,10 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include "layer.h"
 #include "sprite.h"
+#include "colour.h"
 
 Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength) {
 	Layer *layer = malloc(sizeof(Layer));
@@ -84,7 +86,8 @@ int draw_icon(Layer **layer,short y, short x, char iconLayer) {
 	return 0;
 }
 
-void add_colour_to_layer(Layer *layer, short y, short x, Colour colour) {
+void add_colour_to_layer(Layer *layer, short y, short x,
+		uint8_t r, uint8_t g, uint8_t b) {
 	if (	y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength) {
 		return;
@@ -92,8 +95,8 @@ void add_colour_to_layer(Layer *layer, short y, short x, Colour colour) {
 	Sprite *sprite = &(layer->sprite[y][x]);
 	sprite->colourDepth++;
 	sprite->colour = realloc(sprite->colour,
-			sizeof(Colour) * sprite->colourDepth);
-	sprite->colour[sprite->colourDepth - 1] = colour;
+			sizeof(char) * sprite->colourDepth);
+	sprite->colour[sprite->colourDepth - 1] = rgb_to_term(r, g, b);
 	layer->draw = true;
 	return;
 }
