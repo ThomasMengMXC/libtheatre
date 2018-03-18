@@ -16,13 +16,11 @@ int draw_screen(Screen *scr) {
 			while (activate_colour(scr->layer, y, x, colourLayer)) {
 				--colourLayer;
 			}
-			if (colourLayer < 1) {
-				mvprintw(y, 2 * x, "  ");
-			}
 			while (draw_icon(scr->layer, y, x, iconLayer)) {
 				--iconLayer;
 			}
 			if (iconLayer < 1) {
+				printf("wow\n");
 				mvprintw(y, 2 * x, "  ");
 			}
 			deactivate_colour(scr->layer, y, x, colourLayer);

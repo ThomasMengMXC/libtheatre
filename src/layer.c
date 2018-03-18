@@ -130,6 +130,7 @@ void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
 	sprite->iconDepth++;
+	fprintf(stderr, "%d\n", sprite->iconDepth);
 	sprite->icon = realloc(sprite->icon, sizeof(char *) * sprite->iconDepth);
 
 	sprite->icon[sprite->iconDepth - 1] = malloc(sizeof(char) * 3);
@@ -151,7 +152,8 @@ void remove_icon_from_layer(Layer *layer, short y, short x) {
 	sprite->icon[sprite->iconDepth - 1] = NULL;
 	if (sprite->iconDepth > 1) {
 		sprite->iconDepth--;
-		sprite->icon = realloc(sprite->icon, sizeof(char *) * sprite->iconDepth);
+		sprite->icon = realloc(sprite->icon,
+				sizeof(char *) * sprite->iconDepth);
 	} else if (sprite->iconDepth == 1) {
 		sprite->iconDepth--;
 		free(sprite->icon);
