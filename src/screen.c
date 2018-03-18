@@ -20,7 +20,6 @@ int draw_screen(Screen *scr) {
 				--iconLayer;
 			}
 			if (iconLayer < 1) {
-				printf("wow\n");
 				mvprintw(y, 2 * x, "  ");
 			}
 			deactivate_colour(scr->layer, y, x, colourLayer);

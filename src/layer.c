@@ -24,52 +24,63 @@ void free_layer(Layer *layer) {
 
 // Returns 1 if nothing is drawn, 0 otherwise
 int activate_colour(Layer **layer, short y, short x, char colourLayer) {
-	if (colourLayer < 1) {
-		return 0;
-	}
 	Layer *lyr = layer[colourLayer - 1];
-	short yRelative = y - lyr->yOffset;
-	short xRelative = x - lyr->xOffset;
-	if (lyr->visibility == false ||
-			yRelative < 0 || yRelative >= lyr->yLength ||
-			xRelative < 0 || xRelative >= lyr->xLength) {
-		return 1;
-	}
-	Sprite *sprite = lyr->sprite[yRelative] + xRelative;
-	if (sprite->colourDepth == 0) {
-		return 1;
-	}
-	attron(COLOR_PAIR(sprite->colour[sprite->colourDepth - 1]));
+
+	int result = position_test(layer, y, x, colourLayer);
+	if (result == 0 || result == 1) return result;
+
+	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
+	if (sprite->colourDepth == 0) return 1;
+
+	RGB col = sprite->colour[sprite->colourDepth - 1];
+	int termColour = 0;
+	if (col.term == 256) termColour = rgb_to_term256(col.r, col.g, col.b);
+	if (col.term == 16) termColour = rgb_to_term16(col.r, col.g, col.b);
+	else termColour = rgb_to_term8(col.r, col.g, col.b);
+	attron(COLOR_PAIR(termColour));
+
 	lyr->draw = false;
 	return 0;
 }
 
 int deactivate_colour(Layer **layer, short y, short x, char colourLayer) {
-	if (colourLayer < 1) {
-		return 0;
-	}
 	Layer *lyr = layer[colourLayer - 1];
-	short yRelative = y - lyr->yOffset;
-	short xRelative = x - lyr->xOffset;
-	if (lyr->visibility == false ||
-			yRelative < 0 || yRelative >= lyr->yLength ||
-			xRelative < 0 || xRelative >= lyr->xLength) {
-		return 1;
-	}
-	Sprite *sprite = lyr->sprite[yRelative] + xRelative;
-	if (sprite->colourDepth == 0) {
-		return 1;
-	}
-	attroff(COLOR_PAIR(sprite->colour[sprite->colourDepth - 1]));
+
+	int result = position_test(layer, y, x, colourLayer);
+	if (result == 0 || result == 1) return result;
+
+	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
+	if (sprite->colourDepth == 0) return 1;
+
+	RGB col = sprite->colour[sprite->colourDepth - 1];
+	int termColour = 0;
+	if (col.term == 256) termColour = rgb_to_term256(col.r, col.g, col.b);
+	if (col.term == 16) termColour = rgb_to_term16(col.r, col.g, col.b);
+	else termColour = rgb_to_term8(col.r, col.g, col.b);
+
+	attroff(COLOR_PAIR(termColour));
 	return 0;
 }
 
 // Returns 1 if nothing is drawn, 0 otherwise
 int draw_icon(Layer **layer,short y, short x, char iconLayer) {
-	if (iconLayer < 1) {
-		return 0;
-	}
 	Layer *lyr = layer[iconLayer - 1];
+
+	int result = position_test(layer, y, x, iconLayer);
+	if (result == 0 || result == 1) return result;
+
+	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
+	if (sprite->iconDepth == 0) return 1;
+
+	mvprintw(y, 2 * x, sprite->icon[sprite->iconDepth - 1]);
+	lyr->draw = false;
+	return 0;
+}
+
+int position_test(Layer **layer, short y, short x, char depth) {
+	if (depth < 1) return 0;
+
+	Layer *lyr = layer[depth - 1];
 	short yRelative = y - lyr->yOffset;
 	short xRelative = x - lyr->xOffset;
 	if (lyr->visibility == false ||
@@ -77,16 +88,10 @@ int draw_icon(Layer **layer,short y, short x, char iconLayer) {
 			xRelative < 0 || xRelative >= lyr->xLength) {
 		return 1;
 	}
-	Sprite *sprite = lyr->sprite[yRelative] + xRelative;
-	if (sprite->iconDepth == 0) {
-		return 1;
-	}
-	mvprintw(y, 2 * x, sprite->icon[sprite->iconDepth - 1]);
-	lyr->draw = false;
-	return 0;
+	return -1;
 }
 
-void add_colour_to_layer(Layer *layer, short y, short x,
+void add_colour_to_layer(Layer *layer, short y, short x, uint8_t term, 
 		uint8_t r, uint8_t g, uint8_t b) {
 	if (	y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength) {
@@ -95,8 +100,12 @@ void add_colour_to_layer(Layer *layer, short y, short x,
 	Sprite *sprite = &(layer->sprite[y][x]);
 	sprite->colourDepth++;
 	sprite->colour = realloc(sprite->colour,
-			sizeof(char) * sprite->colourDepth);
-	sprite->colour[sprite->colourDepth - 1] = rgb_to_term(r, g, b);
+			sizeof(RGB) * sprite->colourDepth);
+	RGB col = {
+		.term = term,
+		.r = r, .g = g, .b = b
+	};
+	sprite->colour[sprite->colourDepth - 1] = col;
 	layer->draw = true;
 	return;
 }
@@ -107,13 +116,12 @@ void remove_colour_from_layer(Layer *layer, short y, short x) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
-	if (sprite->colourDepth < 1) {
-		return;
-	}
+	if (sprite->colourDepth < 1) return;
+
 	if (sprite->colourDepth > 1) {
 		sprite->colourDepth--;
 		sprite->colour = realloc(sprite->colour,
-				sizeof(short) * sprite->colourDepth);
+				sizeof(RGB) * sprite->colourDepth);
 	} else if (sprite->colourDepth == 1) {
 		sprite->colourDepth--;
 		free(sprite->colour);
@@ -145,9 +153,8 @@ void remove_icon_from_layer(Layer *layer, short y, short x) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
-	if (sprite->iconDepth < 1) {
-		return;
-	}
+	if (sprite->iconDepth < 1) return;
+
 	free(sprite->icon[sprite->iconDepth - 1]);
 	sprite->icon[sprite->iconDepth - 1] = NULL;
 	if (sprite->iconDepth > 1) {
@@ -182,9 +189,8 @@ void remove_button_from_layer(Layer *layer, short y, short x) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
-	if (sprite->buttonDepth < 1) {
-		return;
-	}
+	if (sprite->buttonDepth < 1) return;
+
 	if (sprite->buttonDepth > 1) {
 		sprite->buttonDepth--;
 		sprite->button = realloc(sprite->button,
