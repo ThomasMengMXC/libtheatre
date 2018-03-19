@@ -1,34 +1,42 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <theatre/stage.h>
-#include <theatre/scene.h>
 
-#include "game.h"
-#include "overmap_SC.h"
+#include "play.h"
+#include "scene.h"
 
 static void segfault(int signo) {
 	endwin();
-	printf("segfaulted LOL: %d\n", signo);
+	printf("segfaulted: %d\n", signo);
 	exit(1);
 }
 
-void testing(void) {
-}
-
 // left as an exercise for the reader :^)
-int main(int argc, char **argv) {
+void init_theatre(void) {
 	signal(SIGSEGV, segfault);
 
-	Stage *stage;
-	Scene *scene;
-
 	init_ncurses();
+	return;
+}
 
-	stage = init_stage();
+// set up some ncurses specific stuff
+int init_ncurses(void) {
+	initscr();
 
-	add_scene_to_stage(stage, overmap_update, overmap_keyboard,
-			overmap_entry, overmap_exit);	
+	start_color();
+	for (int i = 0; i < 232; i++) {
+		init_pair(i, COLOR_BLACK, i);
+	}
+	cbreak();
+	noecho();
+	curs_set(0);
+	timeout(16); // 60fps baby
+	keypad(stdscr, TRUE);
+	return 0;
+}
+
+int enact_play(Stage *stage) {
+	Scene *scene;
 	stage->currentScene->entry(stage->currentScene->props);
 	int ch = 0;
 	while((ch = getch()) != 'q') {
@@ -43,24 +51,5 @@ int main(int argc, char **argv) {
 		}
 	}
 	stage->currentScene->exit(stage->currentScene->props);
-	free_stage(stage);
-	endwin();
-	return 0;
-}
-
-// set up some ncurses specific stuff
-int init_ncurses(void) {
-	initscr();
-
-	start_color();
-	init_pair(GRASS, COLOR_BLACK, COLOR_GREEN);
-	init_pair(MOVE_RANGE, COLOR_BLACK, COLOR_WHITE);
-	init_pair(CURSOR, COLOR_BLACK, COLOR_BLUE);
-
-	cbreak();
-	noecho();
-	curs_set(0);
-	timeout(16);
-	keypad(stdscr, TRUE);
 	return 0;
 }

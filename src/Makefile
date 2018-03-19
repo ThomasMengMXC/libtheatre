@@ -4,13 +4,19 @@ CC = gcc
 
 all: libtheatre.so /usr/local/include/theatre
 
+install: all
+	mkdir -p /usr/local/include/theatre
+	cp *.h /usr/local/include/theatre
+	cp libtheatre.so /usr/local/lib
+
 /usr/local/include/theatre:
 	sudo mkdir /usr/local/include/theatre
 
-libtheatre.so: stage.o scene.o screen.o layer.o sprite.o colour.o /usr/local/include/theatre
+libtheatre.so: play.o stage.o scene.o screen.o layer.o sprite.o colour.o theatre.h /usr/local/include/theatre
 	$(CC) -shared -o libtheatre.so *.o -lm
-	sudo cp libtheatre.so /usr/local/lib
-	sudo cp *.h /usr/local/include/theatre
+
+play.o: play.c play.h
+	$(CC) $(CFLAGS) -fPIC -c play.c
 
 stage.o: stage.c stage.h
 	$(CC) $(CFLAGS) -fPIC -c stage.c
@@ -30,8 +36,11 @@ sprite.o: sprite.c sprite.h
 colour.o: colour.c
 	$(CC) $(CFLAGS) -fPIC -c colour.c
 
-clean: /usr/local/include/theatre
+clean: libtheatre.so
 	rm *.o
 	rm libtheatre.so
-	sudo rm /usr/local/lib/libtheatre.so
-	sudo rm /usr/local/include/theatre/*
+
+uninstall: /usr/local/lib/libtheatre.so
+	rm -f /usr/local/lib/libtheatre.so
+	rm -f /usr/local/include/theatre/*
+	rm -rf /usr/local/include/theatre
