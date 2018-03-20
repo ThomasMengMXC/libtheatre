@@ -5,6 +5,7 @@
 Stage *init_stage(void) {
 	Stage *stage = malloc(sizeof(Stage));
 	stage->depth = 0;
+	stage->maxDepth = 0;
 	stage->scene = NULL;
 	stage->currentScene = NULL;
 	return stage;
@@ -31,8 +32,10 @@ void scene_change(Stage *stage, short newSc) {
 void add_scene_to_stage(Stage *stage, UpdateFn upd, KeyboardFn kb,
 		EntryFn entry, ExitFn exit) {
 	stage->depth++;
-	stage->scene = realloc(stage->scene, sizeof(Scene *) * stage->depth);
-
+	if (stage->depth >= stage->maxDepth) {
+		stage->maxDepth = (stage->maxDepth + 1) * 2;
+		stage->scene = realloc(stage->scene, sizeof(Scene *) * stage->maxDepth);
+	}
 	stage->scene[stage->depth - 1] = init_scene(upd, kb, entry, exit);
 	if (stage->currentScene == NULL) {
 		stage->currentScene = stage->scene[stage->depth - 1];
@@ -41,14 +44,18 @@ void add_scene_to_stage(Stage *stage, UpdateFn upd, KeyboardFn kb,
 }
 
 void remove_scene_from_stage(Stage *stage) {
-	free_scene(stage->scene[stage->depth - 1]);
-	if (stage->depth > 1) {
+	if (stage->depth) {
+		free_scene(stage->scene[stage->depth - 1]);
 		stage->depth--;
-		stage->scene = realloc(stage->scene, sizeof(Scene *) * stage->depth);
-	} else if (stage->depth == 1) {
-		stage->depth--;
-		free(stage->scene);
-		stage->scene = NULL;
+		while (stage->depth < stage->maxDepth) {
+			stage->maxDepth /= 2;
+			if (stage->maxDepth == 0) {
+				free(stage->scene);
+			} else {
+				stage->scene = realloc(stage->scene,
+						sizeof(Scene *) * stage->maxDepth);
+			}
+		}
 	}
 	return;
 }

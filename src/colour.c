@@ -1,5 +1,6 @@
 // AUSSIE AUSSIE AUSSIE
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include "colour.h"

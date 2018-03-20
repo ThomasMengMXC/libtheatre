@@ -6,6 +6,7 @@
 typedef struct Stage{
 	void *backstage;
 	short depth;
+	short maxDepth;
 	Scene **scene;
 	Scene *currentScene;
 } Stage;

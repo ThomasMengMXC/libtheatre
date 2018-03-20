@@ -5,22 +5,24 @@
 #include "play.h"
 #include "scene.h"
 
+static void segfault(int signo);
+static int init_ncurses(void);
+
+// left as an exercise for the reader :^)
+void init_theatre(void) {
+	signal(SIGSEGV, segfault);
+	init_ncurses();
+	return;
+}
+
 static void segfault(int signo) {
 	endwin();
 	printf("segfaulted: %d\n", signo);
 	exit(1);
 }
 
-// left as an exercise for the reader :^)
-void init_theatre(void) {
-	signal(SIGSEGV, segfault);
-
-	init_ncurses();
-	return;
-}
-
 // set up some ncurses specific stuff
-int init_ncurses(void) {
+static int init_ncurses(void) {
 	initscr();
 
 	start_color();

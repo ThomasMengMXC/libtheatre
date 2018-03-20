@@ -27,15 +27,15 @@ int activate_colour(Layer **layer, short y, short x, char colourLayer) {
 	Layer *lyr = layer[colourLayer - 1];
 
 	int result = position_test(layer, y, x, colourLayer);
-	if (result == 0 || result == 1) return result;
+	if (result >= 0) return result;
 
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
 	if (sprite->colourDepth == 0) return 1;
 
 	RGB col = sprite->colour[sprite->colourDepth - 1];
 	int termColour = 0;
-	if (col.term == 256) termColour = rgb_to_term256(col.r, col.g, col.b);
-	if (col.term == 16) termColour = rgb_to_term16(col.r, col.g, col.b);
+	if (col.term == 255) termColour = rgb_to_term256(col.r, col.g, col.b);
+	else if (col.term == 16) termColour = rgb_to_term16(col.r, col.g, col.b);
 	else termColour = rgb_to_term8(col.r, col.g, col.b);
 	attron(COLOR_PAIR(termColour));
 
@@ -47,14 +47,14 @@ int deactivate_colour(Layer **layer, short y, short x, char colourLayer) {
 	Layer *lyr = layer[colourLayer - 1];
 
 	int result = position_test(layer, y, x, colourLayer);
-	if (result == 0 || result == 1) return result;
+	if (result >= 0) return result;
 
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
 	if (sprite->colourDepth == 0) return 1;
 
 	RGB col = sprite->colour[sprite->colourDepth - 1];
 	int termColour = 0;
-	if (col.term == 256) termColour = rgb_to_term256(col.r, col.g, col.b);
+	if (col.term == 255) termColour = rgb_to_term256(col.r, col.g, col.b);
 	if (col.term == 16) termColour = rgb_to_term16(col.r, col.g, col.b);
 	else termColour = rgb_to_term8(col.r, col.g, col.b);
 
@@ -67,7 +67,7 @@ int draw_icon(Layer **layer,short y, short x, char iconLayer) {
 	Layer *lyr = layer[iconLayer - 1];
 
 	int result = position_test(layer, y, x, iconLayer);
-	if (result == 0 || result == 1) return result;
+	if (result >= 0) return result;
 
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
 	if (sprite->iconDepth == 0) return 1;
@@ -138,7 +138,6 @@ void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
 	sprite->iconDepth++;
-	fprintf(stderr, "%d\n", sprite->iconDepth);
 	sprite->icon = realloc(sprite->icon, sizeof(char *) * sprite->iconDepth);
 
 	sprite->icon[sprite->iconDepth - 1] = malloc(sizeof(char) * 3);

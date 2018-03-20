@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 typedef int (*Button)(void *);
+
 typedef struct RGB {
 	uint8_t term, r, g, b;
 } RGB;
