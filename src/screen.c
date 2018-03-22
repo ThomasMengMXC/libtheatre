@@ -61,7 +61,6 @@ Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 
 	if (yLength == 0) yLength = scr->yLength;
 	if (xLength == 0) xLength = scr->xLength;
-	fprintf(stderr, "%d\n", scr->depth);
 	scr->layer[scr->depth - 1] = init_layer(yOffset, xOffset, yLength, xLength);
 	return scr->layer[scr->depth - 1];
 }

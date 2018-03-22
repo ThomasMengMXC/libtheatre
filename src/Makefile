@@ -1,5 +1,5 @@
-CFLAGS = -Wall -pedantic -g -std=gnu11 -O3
-LFLAGS = -Wall -ltheatre -ltinfo -lncursesw # -lSDL2_mixer -lSDL2 \
+CFLAGS = -Wall -pedantic -g -std=gnu11
+LFLAGS = -Wall -ltheatre -ltinfo -lncursesw
 CC = gcc
 
 all: libtheatre.so

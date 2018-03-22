@@ -24,10 +24,10 @@ void free_layer(Layer *layer) {
 
 // Returns 1 if nothing is drawn, 0 otherwise
 int activate_colour(Layer **layer, short y, short x, char colourLayer) {
-	Layer *lyr = layer[colourLayer - 1];
-
 	int result = position_test(layer, y, x, colourLayer);
 	if (result >= 0) return result;
+
+	Layer *lyr = layer[colourLayer - 1];
 
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
 	if (sprite->colourDepth == 0) return 1;
@@ -44,10 +44,10 @@ int activate_colour(Layer **layer, short y, short x, char colourLayer) {
 }
 
 int deactivate_colour(Layer **layer, short y, short x, char colourLayer) {
-	Layer *lyr = layer[colourLayer - 1];
-
 	int result = position_test(layer, y, x, colourLayer);
 	if (result >= 0) return result;
+
+	Layer *lyr = layer[colourLayer - 1];
 
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
 	if (sprite->colourDepth == 0) return 1;
@@ -64,10 +64,10 @@ int deactivate_colour(Layer **layer, short y, short x, char colourLayer) {
 
 // Returns 1 if nothing is drawn, 0 otherwise
 int draw_icon(Layer **layer,short y, short x, char iconLayer) {
-	Layer *lyr = layer[iconLayer - 1];
-
 	int result = position_test(layer, y, x, iconLayer);
 	if (result >= 0) return result;
+
+	Layer *lyr = layer[iconLayer - 1];
 
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
 	if (sprite->iconDepth == 0) return 1;
