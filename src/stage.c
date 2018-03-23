@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "stage.h"
-#include "scene.h"
 
 Stage *init_stage(void) {
 	Stage *stage = malloc(sizeof(Stage));

@@ -1,15 +1,6 @@
 #include <stdlib.h>
 #include "sprite.h"
 
-
-/*
-void scene_init(struct Game *game);
-
-void scene_change(struct Game *game, int oldSc, int newSc);
-
-void scene_exit(struct Game *game);
-*/
-
 Sprite **init_sprite(short yLength, short xLength) {
 	Sprite **spriteArray = malloc(sizeof(Sprite *) * yLength); // the sprite
 	for (int y = 0; y < yLength; y++) {

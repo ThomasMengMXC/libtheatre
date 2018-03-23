@@ -3,8 +3,6 @@
 #include <string.h>
 #include <stdint.h>
 #include "layer.h"
-#include "sprite.h"
-#include "colour.h"
 
 Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength) {
 	Layer *layer = malloc(sizeof(Layer));

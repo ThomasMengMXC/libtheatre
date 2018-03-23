@@ -1,15 +1,10 @@
 #ifndef LAYER_H
 #define LAYER_H
-#include <ncurses.h>
-#include "sprite.h"
 
-typedef struct {
-	char draw; // has this layer been updated
-	char visibility;
-	short yOffset, xOffset;
-	short yLength, xLength;
-	Sprite **sprite;
-} Layer;
+#include <ncurses.h>
+#include "layer_struct.h"
+#include "sprite.h"
+#include "colour.h"
 
 Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength);
 void free_layer(Layer *layer);

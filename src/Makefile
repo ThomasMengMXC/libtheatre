@@ -1,5 +1,5 @@
 CFLAGS = -Wall -pedantic -g -std=gnu11
-LFLAGS = -Wall -ltheatre -ltinfo -lncursesw
+LFLAGS = -ltinfo -lncurses
 CC = gcc
 
 all: libtheatre.so
@@ -9,8 +9,8 @@ install: all
 	cp *.h /usr/local/include/theatre
 	cp libtheatre.so /usr/local/lib
 
-libtheatre.so: play.o stage.o scene.o screen.o layer.o sprite.o colour.o theatre.h
-	$(CC) -shared -o libtheatre.so *.o -lm
+libtheatre.so: play.o stage.o scene.o props.o screen.o layer.o sprite.o colour.o
+	$(CC) -shared *.o $(LFLAGS) -o libtheatre.so
 
 play.o: play.c play.h
 	$(CC) $(CFLAGS) -fPIC -c play.c
@@ -20,6 +20,9 @@ stage.o: stage.c stage.h
 
 scene.o: scene.c scene.h
 	$(CC) $(CFLAGS) -fPIC -c scene.c
+
+props.o: props.c props.h
+	$(CC) $(CFLAGS) -fPIC -c props.c
 
 screen.o: screen.c screen.h sprite.h
 	$(CC) $(CFLAGS) -fPIC -c screen.c

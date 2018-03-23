@@ -3,7 +3,6 @@
 #include <signal.h>
 
 #include "play.h"
-#include "scene.h"
 
 static void segfault(int signo);
 static int init_ncurses(void);
@@ -54,4 +53,8 @@ int enact_play(Stage *stage) {
 	}
 	stage->currentScene->exit(stage->currentScene->props);
 	return 0;
+}
+
+void finale(void) {
+	endwin();
 }

@@ -1,12 +1,8 @@
 #ifndef SCREEN_H
 #define SCREEN_H
-#include "layer.h"
 
-typedef struct {
-	short depth;
-	short yLength, xLength;
-	Layer **layer;
-} Screen;
+#include "screen_struct.h"
+#include "layer.h"
 
 int draw_screen(Screen *scr);
 bool should_draw(Layer **layer, short depth);

@@ -6,5 +6,6 @@
 
 void init_theatre(void);
 int enact_play(Stage *stage);
+void finale(void);
 
 #endif

@@ -1,7 +1,6 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include "screen.h"
-#include "layer.h"
 
 extern FILE *fp;
 
@@ -43,6 +42,9 @@ bool should_draw(Layer **layer, short depth) {
 Screen *init_screen(short yLength, short xLength) {
 	Screen *scr = malloc(sizeof(Screen));
 	scr->depth = 0;
+	if (yLength == 0 && xLength == 0) {
+		getmaxyx(stdscr, yLength, xLength);
+	}
 	scr->yLength = yLength;
 	scr->xLength = xLength;
 	scr->layer = NULL;

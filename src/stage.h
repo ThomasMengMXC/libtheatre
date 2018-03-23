@@ -1,15 +1,8 @@
 #ifndef STAGE_H
 #define STAGE_H
 
+#include "stage_struct.h"
 #include "scene.h"
-
-typedef struct Stage{
-	void *backstage;
-	short depth;
-	short maxDepth;
-	Scene **scene;
-	Scene *currentScene;
-} Stage;
 
 Stage *init_stage(void);
 void free_stage(Stage *stage);
