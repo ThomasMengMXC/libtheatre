@@ -11,9 +11,9 @@ Sprite **init_sprite(short yLength, short xLength) {
 			sprite->icon = NULL;
 			sprite->button = NULL;
 
-			sprite->colourDepth = 0;
-			sprite->iconDepth = 0;
-			sprite->buttonDepth = 0;
+			sprite->colourDepth = 0;	sprite->colourMaxDepth = 0;
+			sprite->iconDepth = 0;		sprite->iconMaxDepth = 0;
+			sprite->buttonDepth = 0;	sprite->buttonMaxDepth = 0;
 		}
 	}
 	return spriteArray;

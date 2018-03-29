@@ -1,14 +1,11 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include "screen.h"
-
-extern FILE *fp;
+#include "layer.h"
 
 int draw_screen(Screen *scr) {
 	short colourLayer, iconLayer;
-	if (!should_draw(scr->layer, scr->depth)) {
-		return 0;
-	}
+
 	for (short y = 0; y < scr->yLength; y++) {
 		for (short x = 0; x < scr->xLength; x++) {
 			colourLayer = iconLayer = scr->depth;
@@ -28,55 +25,77 @@ int draw_screen(Screen *scr) {
 	return 0;
 }
 
-// Are any layers worth drawing?
-bool should_draw(Layer **layer, short depth) {
-	while (depth > 0 && layer[depth - 1]->draw == false) {
-		depth--;
-	}
-	if (depth < 1) {
-		return false;
-	}
-	return true;
-}
-
 Screen *init_screen(short yLength, short xLength) {
 	Screen *scr = malloc(sizeof(Screen));
-	scr->depth = 0;
+	scr->depth = 0; scr->maxDepth = 0;
 	if (yLength == 0 && xLength == 0) {
 		getmaxyx(stdscr, yLength, xLength);
 	}
 	scr->yLength = yLength;
 	scr->xLength = xLength;
 	scr->layer = NULL;
+	scr->update = init_update_map(scr->yLength, scr->xLength);
 	return scr;
 }
 
 void free_screen(Screen *scr) {
+	while (scr->depth) {
+		remove_layer_from_scr(scr);
+	}
+	free_update_map(scr->update, scr->yLength, scr->xLength);
 	free(scr);
+}
+
+char **init_update_map(short yLength, short xLength) {
+	char **update = malloc(sizeof(char *) * yLength);
+	for (short y = 0; y < yLength; y++) {
+		update[y] = malloc(sizeof(char) * xLength);
+		for (short x = 0; x < xLength; x++) {
+			update[y][x] = 0;
+		}
+	}
+	return update;
+}
+
+void free_update_map(char **update, short yLength, short xLength) {
+	for (short y = 0; y < yLength; y++) {
+		free(update[y]);
+	}
+	free(update);
+	return;
 }
 
 // creates a new layer on the screen and returns a pointer to said new layer
 Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 		short yLength, short xLength) {
 	scr->depth++;
-	scr->layer = realloc(scr->layer, sizeof(Layer *) * scr->depth);
+	if (scr->depth >= scr->maxDepth) {
+		scr->maxDepth = scr->depth * 2;
+		scr->layer = realloc(scr->layer, sizeof(Layer *) * scr->maxDepth);
+	}
 
 	if (yLength == 0) yLength = scr->yLength;
 	if (xLength == 0) xLength = scr->xLength;
 	scr->layer[scr->depth - 1] = init_layer(yOffset, xOffset, yLength, xLength);
+	scr->layer[scr->depth - 1]->update = &(scr->update);
 	return scr->layer[scr->depth - 1];
 }
 
 void remove_layer_from_scr(Screen *scr) {
-	free_layer(scr->layer[scr->depth - 1]);
-	
-	if (scr->depth > 1) {
+	if (scr->depth) {
+		free_layer(scr->layer[scr->depth - 1]);
+		scr->layer[scr->depth - 1] = NULL;
 		scr->depth--;
-		scr->layer = realloc(scr->layer, sizeof(Layer *) * scr->depth);
-	} else if (scr->depth == 1) {
-		scr->depth--;
-		free(scr->layer);
-		scr->layer = NULL;
+		while (scr->depth * 2 < scr->maxDepth) {
+			scr->maxDepth = scr->depth * 3 / 2;
+			if (scr->maxDepth == 0) {
+				free(scr->layer);
+				scr->layer = NULL;
+			} else {
+				scr->layer = realloc(scr->layer,
+						sizeof(Layer *) * scr->maxDepth);
+			}
+		}
 	}
 	return;
 }

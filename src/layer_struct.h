@@ -4,11 +4,11 @@
 #include "sprite_struct.h"
 
 typedef struct {
-	char draw; // has this layer been updated
-	char visibility;
+	char visibility; // has this layer been updated
 	short yOffset, xOffset;
 	short yLength, xLength;
 	Sprite **sprite;
+	char ***update;
 } Layer;
 
 #endif

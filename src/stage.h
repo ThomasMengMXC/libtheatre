@@ -2,7 +2,7 @@
 #define STAGE_H
 
 #include "stage_struct.h"
-#include "scene.h"
+#include "scene_struct.h"
 
 Stage *init_stage(void);
 void free_stage(Stage *stage);

@@ -3,14 +3,16 @@
 
 #include <stdint.h>
 
-typedef int (*Button)(void *);
+typedef int (*Button)(void *, short y, short x);
 
 typedef struct RGB {
-	uint8_t term, r, g, b;
+	short term;
+	uint8_t r, g, b;
 } RGB;
 
 typedef struct {
 	char colourDepth, iconDepth, buttonDepth;
+	char colourMaxDepth, iconMaxDepth, buttonMaxDepth;
 	RGB *colour;
 	char **icon;
 	Button *button;

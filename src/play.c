@@ -3,6 +3,7 @@
 #include <signal.h>
 
 #include "play.h"
+#include "stage.h"
 
 static void segfault(int signo);
 static int init_ncurses(void);
@@ -40,14 +41,18 @@ int enact_play(Stage *stage) {
 	Scene *scene;
 	stage->currentScene->entry(stage->currentScene->props);
 	int ch = 0;
-	while((ch = getch()) != 'q') {
+	while(1) {
+		ch = getch();
 		scene = stage->currentScene; // set the current scene
-		if (scene) {
+		if (stage->currentScene) {
 			scene->update(scene->props);
 			scene->keyboard(scene->props, ch);
 			if (scene->props->changeScene != -1) {
 				scene_change(stage, scene->props->changeScene);
 				scene->props->changeScene = -1;
+			}
+			if (scene->props->quit) {
+				break;
 			}
 		}
 	}

@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 #include "layer_struct.h"
-#include "sprite.h"
+#include "sprite_struct.h"
 #include "colour.h"
 
 Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength);
@@ -15,7 +15,7 @@ int draw_icon(Layer **layer, short y, short x, char iconLayer);
 
 int position_test(Layer **layer, short y, short x, char depth);
 
-void add_colour_to_layer(Layer *layer, short y, short x, uint8_t term, 
+void add_colour_to_layer(Layer *layer, short y, short x, short term, 
 		uint8_t r, uint8_t g, uint8_t b);
 void remove_colour_from_layer(Layer *layer, short y, short x);
 
