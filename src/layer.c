@@ -5,6 +5,7 @@
 
 #include "layer.h"
 #include "sprite.h"
+#include "colour.h"
 
 Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength) {
 	Layer *layer = malloc(sizeof(Layer));
@@ -35,9 +36,9 @@ int activate_colour(Layer **layer, short y, short x, char colourLayer) {
 
 	RGB col = sprite->colour[sprite->colourDepth - 1];
 	int termColour = 0;
-	if (col.term == 256)	termColour = rgb_to_term256(col.r, col.g, col.b);
-	else if (col.term == 16)termColour = rgb_to_term16(col.r, col.g, col.b);
-	else 					termColour = rgb_to_term8(col.r, col.g, col.b);
+	if (col.term == 256)    termColour = rgb_to_term256(col.r, col.g, col.b);
+    else if (col.term == 16)termColour = rgb_to_term16(col.r, col.g, col.b);
+    else                    termColour = rgb_to_term8(col.r, col.g, col.b);
 	attron(COLOR_PAIR(termColour));
 
 	return 0;

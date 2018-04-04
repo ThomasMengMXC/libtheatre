@@ -4,7 +4,6 @@
 #include <ncurses.h>
 #include "layer_struct.h"
 #include "sprite_struct.h"
-#include "colour.h"
 
 Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength);
 void free_layer(Layer *layer);

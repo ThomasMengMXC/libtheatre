@@ -1,13 +1,14 @@
 CFLAGS = -Wall -pedantic -g -std=gnu11 -fPIC -O3
 LFLAGS = -ltinfo -lncurses
+DIRECTORY = $(HOME)
 CC = gcc
 
 all: libtheatre.so
 
 install: all 
-	mkdir -p /usr/include/theatre
-	cp *.h /usr/include/theatre
-	cp libtheatre.so /usr/lib
+	mkdir -p $(DIRECTORY)/include/theatre
+	cp *.h $(DIRECTORY)/include/theatre
+	cp libtheatre.so $(DIRECTORY)/lib
 
 libtheatre.so: play.o stage.o scene.o props.o screen.o layer.o sprite.o colour.o
 	$(CC) -shared *.o $(LFLAGS) -o libtheatre.so
@@ -40,7 +41,7 @@ clean:
 	rm -f *.o
 	rm -f libtheatre.so
 
-uninstall: /usr/lib/libtheatre.so
-	rm -f /usr/lib/libtheatre.so
-	rm -f /usr/include/theatre/*
-	rm -rf /usr/include/theatre
+uninstall:
+	rm -f $(DIRECTORY)/lib/libtheatre.so
+	rm -f $(DIRECTORY)/include/theatre/*
+	rm -rf $(DIRECTORY)/include/theatre

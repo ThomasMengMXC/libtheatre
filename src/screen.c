@@ -5,7 +5,6 @@
 
 int draw_screen(Screen *scr) {
 	short colourLayer, iconLayer;
-
 	for (short y = 0; y < scr->yLength; y++) {
 		for (short x = 0; x < scr->xLength; x++) {
 			colourLayer = iconLayer = scr->depth;
