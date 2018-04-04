@@ -39,6 +39,9 @@ static int init_ncurses(void) {
 
 int enact_play(Stage *stage) {
 	Scene *scene;
+    if (stage->currentScene == NULL) {
+        return 0;
+    }
 	stage->currentScene->entry(stage->currentScene->props);
 	int ch = 0;
 	while(1) {
