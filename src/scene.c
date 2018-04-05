@@ -1,12 +1,13 @@
 #include <stdlib.h>
 #include "scene.h"
-#include "props.h"
 
-Scene *init_scene(UpdateFn upd, KeyboardFn kb, EntryFn entry, ExitFn exit) {
+Scene *init_scene(UpdateFn upd, KeyboardFn kb,
+        ArrivalFn arrival, DepartureFn departure) {
 	Scene *scene = malloc(sizeof(Scene));
 	scene->props = init_props();
 	scene->update = upd; scene->keyboard = kb; //update & kb hooks during run
-	scene->entry = entry; scene->exit = exit; //entry/exit hooks
+    // entry/exit hooks
+	scene->arrival = arrival; scene->departure = departure;
 	return scene;
 }
 

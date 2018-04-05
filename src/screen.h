@@ -1,8 +1,14 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include "screen_struct.h"
-#include "layer_struct.h"
+#include "layer.h"
+
+typedef struct {
+	short depth, maxDepth;  // The amount of layers that there are
+	short yLength, xLength; // Size of the screen
+	Layer **layer; // The layers for the screen
+	char **update; // Which tile should be drawn
+} Screen;
 
 int draw_screen(Screen *scr);
 

@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "stage.h"
-#include "scene.h"
 
 Stage *init_stage(void) {
 	Stage *stage = malloc(sizeof(Stage));
@@ -21,23 +20,25 @@ void free_stage(Stage *stage) {
 
 void scene_change(Stage *stage, short newSc) {
 	if (stage && stage->depth > newSc) {
-		stage->currentScene->exit(stage->currentScene->props);
+		stage->currentScene->departure(stage->currentScene->props);
 		stage->currentScene = stage->scene[newSc];
-		stage->currentScene->entry(stage->currentScene->props);
+		stage->currentScene->arrival(stage->currentScene->props);
 	}
 	return;
 }
 
 // creates a new scene on the stage and returns a pointer to said new layer
 void add_scene_to_stage(Stage *stage, UpdateFn upd, KeyboardFn kb,
-		EntryFn entry, ExitFn exit) {
+		ArrivalFn arrival, DepartureFn departure) {
 	stage->depth++;
 	if (stage->depth >= stage->maxDepth) {
 		stage->maxDepth = stage->depth * 2;
 		stage->scene = realloc(stage->scene, sizeof(Scene *) * stage->maxDepth);
 	}
-	stage->scene[stage->depth - 1] = init_scene(upd, kb, entry, exit);
-	stage->scene[stage->depth - 1]->props->backstage = &(stage->backstage);
+	stage->scene[stage->depth - 1] =
+        init_scene(upd, kb, arrival, departure);
+	stage->scene[stage->depth - 1]->props->backstage =
+        &(stage->backstage);
 	if (stage->currentScene == NULL) {
 		stage->currentScene = stage->scene[stage->depth - 1];
 	}

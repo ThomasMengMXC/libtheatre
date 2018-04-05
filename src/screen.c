@@ -1,7 +1,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
+
 #include "screen.h"
-#include "layer.h"
 
 int draw_screen(Screen *scr) {
 	short colourLayer, iconLayer;

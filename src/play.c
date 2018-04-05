@@ -1,9 +1,7 @@
-#include <ncurses.h>
 #include <stdlib.h>
 #include <signal.h>
 
 #include "play.h"
-#include "stage.h"
 
 static void segfault(int signo);
 static int init_ncurses(void);
@@ -42,7 +40,7 @@ int enact_play(Stage *stage) {
     if (stage->currentScene == NULL) {
         return 0;
     }
-	stage->currentScene->entry(stage->currentScene->props);
+	stage->currentScene->arrival(stage->currentScene->props);
 	int ch = 0;
 	while(1) {
 		ch = getch();
@@ -59,7 +57,7 @@ int enact_play(Stage *stage) {
 			}
 		}
 	}
-	stage->currentScene->exit(stage->currentScene->props);
+	stage->currentScene->departure(stage->currentScene->props);
 	return 0;
 }
 
