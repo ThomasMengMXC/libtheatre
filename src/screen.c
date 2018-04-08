@@ -46,8 +46,8 @@ int draw_screen(Screen *scr) {
 		// deactivate the colour (essentially lift your pen up)
 		deactivate_colour(scr->layer, y, x, colourLayer);
 		
-		refresh();
 	}
+	refresh();
 	return 0;
 }
 
