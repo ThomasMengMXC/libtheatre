@@ -19,7 +19,7 @@ void free_stage(Stage *stage) {
 
 
 void scene_change(Stage *stage, short newSc) {
-	if (stage && stage->depth > newSc) {
+	if (stage && stage->depth > newSc && newSc > 0) {
 		stage->currentScene->departure(stage->currentScene->props);
 		stage->currentScene = stage->scene[newSc];
 		stage->currentScene->arrival(stage->currentScene->props);
@@ -36,9 +36,9 @@ void add_scene_to_stage(Stage *stage, UpdateFn upd, KeyboardFn kb,
 		stage->scene = realloc(stage->scene, sizeof(Scene *) * stage->maxDepth);
 	}
 	stage->scene[stage->depth - 1] =
-        init_scene(upd, kb, arrival, departure);
+		init_scene(upd, kb, arrival, departure);
 	stage->scene[stage->depth - 1]->props->backstage =
-        &(stage->backstage);
+		&(stage->backstage);
 	if (stage->currentScene == NULL) {
 		stage->currentScene = stage->scene[stage->depth - 1];
 	}

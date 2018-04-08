@@ -23,9 +23,9 @@ uint8_t magnitude8(uint8_t colour) {
 
 uint8_t rgb_to_term256(uint8_t r, uint8_t g, uint8_t b) {
 	return 16
-        + 36 * magnitude256(r)
-        + 6 * magnitude256(g)
-        + magnitude256(b);
+		+ 36 * magnitude256(r)
+		+ 6 * magnitude256(g)
+		+ magnitude256(b);
 }
 
 uint8_t magnitude256(uint8_t colour) {

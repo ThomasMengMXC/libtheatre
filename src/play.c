@@ -37,22 +37,22 @@ static int init_ncurses(void) {
 
 int enact_play(Stage *stage) {
 	Scene *scene;
-    if (stage->currentScene == NULL) {
-        return 0;
-    }
+	if (stage->currentScene == NULL) {
+		return 0;
+	}
 	stage->currentScene->arrival(stage->currentScene->props);
 	int ch = 0;
+	int keyboardSignal = -1;
 	while(1) {
 		ch = getch();
 		scene = stage->currentScene; // set the current scene
 		if (stage->currentScene) {
 			scene->update(scene->props);
-			scene->keyboard(scene->props, ch);
-			if (scene->props->changeScene != -1) {
-				scene_change(stage, scene->props->changeScene);
-				scene->props->changeScene = -1;
-			}
-			if (scene->props->quit) {
+			// change scenes base on the return value
+			if ((keyboardSignal = scene->keyboard(scene->props, ch)) >= 0) {
+				scene_change(stage, keyboardSignal);
+			} else if (keyboardSignal == -2) {
+				// exit if the signal is -2
 				break;
 			}
 		}

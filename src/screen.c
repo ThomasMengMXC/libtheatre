@@ -24,30 +24,29 @@ void free_screen(Screen *scr) {
 }
 
 int draw_screen(Screen *scr) {
-	short colourLayer, iconLayer;
+	short colourLayer, iconLayer, y, x, update;
 	Vector2D vector;
+	update = 0;
 	while ((vector = vector2D_pop(scr->update)).y != -1) {
-		short y = vector.y;
-		short x = vector.x;
+		update = 1;
+		y = vector.y; x = vector.x;
 		colourLayer = iconLayer = scr->depth;
+
 		// go the colour layers until you reach a colour
-		while (activate_colour(scr->layer, y, x, colourLayer)) {
-			--colourLayer;
-		}
+		while (activate_colour(scr->layer, y, x, colourLayer)) --colourLayer;
+
 		// go the icon layers until you reach an icon
-		while (draw_icon(scr->layer, y, x, iconLayer)) {
-			--iconLayer;
-		}
+		while (draw_icon(scr->layer, y, x, iconLayer)) --iconLayer;
+
 		// print a blank character if nothing is here
 		// this should only happen when all icons have been removed
-		if (iconLayer < 1) {
-			mvprintw(y, 2 * x, "  ");
-		}
+		if (iconLayer < 1) mvprintw(y, 2 * x, "  ");
+
 		// deactivate the colour (essentially lift your pen up)
 		deactivate_colour(scr->layer, y, x, colourLayer);
 		
 	}
-	refresh();
+	if (update) refresh();
 	return 0;
 }
 

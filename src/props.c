@@ -5,8 +5,6 @@ Props *init_props(void) {
 	Props *props = malloc(sizeof(Props));
 	props->data = NULL;
 	props->screen = NULL;
-	props->changeScene = -1;
-	props->quit = 0;
 	props->backstage = NULL;
 	return props;
 }
@@ -39,13 +37,4 @@ int activate_button(short y, short x, Props *props) {
 		break;
 	}
 	return 0;
-}
-
-void request_sc_change(Props *props, short newSc) {
-	props->changeScene = newSc;
-}
-
-void quit(Props *props) {
-	props->quit = 1;
-	return;
 }

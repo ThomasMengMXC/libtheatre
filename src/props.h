@@ -7,13 +7,11 @@
 typedef struct Props {
 	void *data;
 	Screen *screen;
-	short changeScene;
-	char quit;
 	void **backstage;
 } Props;
 
 typedef void (*UpdateFn)(Props *props);
-typedef	void (*KeyboardFn)(Props *props, int ch);
+typedef	int (*KeyboardFn)(Props *props, int ch);
 typedef	void (*ArrivalFn)(Props *props);
 typedef	void (*DepartureFn)(Props *props);
 
@@ -21,7 +19,5 @@ Props *init_props(void);
 void free_props(Props *props);
 
 int activate_button(short y, short x, Props *props);
-void request_sc_change(Props *props, short newSC);
-void quit(Props *props);
 
 #endif
