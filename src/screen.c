@@ -3,37 +3,15 @@
 
 #include "screen.h"
 
-int draw_screen(Screen *scr) {
-	short colourLayer, iconLayer;
-	for (short y = 0; y < scr->yLength; y++) {
-		for (short x = 0; x < scr->xLength; x++) {
-			colourLayer = iconLayer = scr->depth;
-			while (activate_colour(scr->layer, y, x, colourLayer)) {
-				--colourLayer;
-			}
-			while (draw_icon(scr->layer, y, x, iconLayer)) {
-				--iconLayer;
-			}
-			if (iconLayer < 1) {
-				mvprintw(y, 2 * x, "  ");
-			}
-			deactivate_colour(scr->layer, y, x, colourLayer);
-		}
-	}
-	refresh();
-	return 0;
-}
-
 Screen *init_screen(short yLength, short xLength) {
 	Screen *scr = malloc(sizeof(Screen));
 	scr->depth = 0; scr->maxDepth = 0;
-	if (yLength == 0 && xLength == 0) {
-		getmaxyx(stdscr, yLength, xLength);
-	}
+	if (yLength == 0) yLength = getmaxy(stdscr);
+	if (xLength == 0) xLength = getmaxx(stdscr);
 	scr->yLength = yLength;
 	scr->xLength = xLength;
 	scr->layer = NULL;
-	scr->update = init_update_map(scr->yLength, scr->xLength);
+	scr->update = init_vector2D_stack();
 	return scr;
 }
 
@@ -41,27 +19,36 @@ void free_screen(Screen *scr) {
 	while (scr->depth) {
 		remove_layer_from_scr(scr);
 	}
-	free_update_map(scr->update, scr->yLength, scr->xLength);
+	free_vector2D_stack(scr->update);
 	free(scr);
 }
 
-char **init_update_map(short yLength, short xLength) {
-	char **update = malloc(sizeof(char *) * yLength);
-	for (short y = 0; y < yLength; y++) {
-		update[y] = malloc(sizeof(char) * xLength);
-		for (short x = 0; x < xLength; x++) {
-			update[y][x] = 0;
+int draw_screen(Screen *scr) {
+	short colourLayer, iconLayer;
+	Vector2D vector;
+	while ((vector = vector2D_pop(scr->update)).y != -1) {
+		short y = vector.y;
+		short x = vector.x;
+		colourLayer = iconLayer = scr->depth;
+		// go the colour layers until you reach a colour
+		while (activate_colour(scr->layer, y, x, colourLayer)) {
+			--colourLayer;
 		}
+		// go the icon layers until you reach an icon
+		while (draw_icon(scr->layer, y, x, iconLayer)) {
+			--iconLayer;
+		}
+		// print a blank character if nothing is here
+		// this should only happen when all icons have been removed
+		if (iconLayer < 1) {
+			mvprintw(y, 2 * x, "  ");
+		}
+		// deactivate the colour (essentially lift your pen up)
+		deactivate_colour(scr->layer, y, x, colourLayer);
+		
+		refresh();
 	}
-	return update;
-}
-
-void free_update_map(char **update, short yLength, short xLength) {
-	for (short y = 0; y < yLength; y++) {
-		free(update[y]);
-	}
-	free(update);
-	return;
+	return 0;
 }
 
 // creates a new layer on the screen and returns a pointer to said new layer
@@ -76,7 +63,7 @@ Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 	if (yLength == 0) yLength = scr->yLength;
 	if (xLength == 0) xLength = scr->xLength;
 	scr->layer[scr->depth - 1] = init_layer(yOffset, xOffset, yLength, xLength);
-	scr->layer[scr->depth - 1]->update = &(scr->update);
+	scr->layer[scr->depth - 1]->update = scr->update;
 	return scr->layer[scr->depth - 1];
 }
 

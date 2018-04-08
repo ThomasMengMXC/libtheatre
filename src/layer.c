@@ -5,6 +5,9 @@
 #include "layer.h"
 #include "colour.h"
 
+static int position_test(Layer **layer, short y, short x, char depth);
+
+
 Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength) {
 	Layer *layer = malloc(sizeof(Layer));
 	layer->visibility = 1;
@@ -27,19 +30,13 @@ int activate_colour(Layer **layer, short y, short x, char colourLayer) {
 	if (result >= 0) return result;
 
 	Layer *lyr = layer[colourLayer - 1];
-	if ((*lyr->update)[y][x] == 0) return 1;
 
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
-	if (sprite->colourDepth == 0) return 1;
+	if (sprite->colourDepth == 0) return 1; // continue searching
 
-	RGB col = sprite->colour[sprite->colourDepth - 1];
-	int termColour = 0;
-	if (col.term == 256)    termColour = rgb_to_term256(col.r, col.g, col.b);
-    else if (col.term == 16)termColour = rgb_to_term16(col.r, col.g, col.b);
-    else                    termColour = rgb_to_term8(col.r, col.g, col.b);
-	attron(COLOR_PAIR(termColour));
+	attron(COLOR_PAIR(sprite->colour[sprite->colourDepth - 1]));
 
-	return 0;
+	return 0; //stop
 }
 
 int deactivate_colour(Layer **layer, short y, short x, char colourLayer) {
@@ -47,19 +44,11 @@ int deactivate_colour(Layer **layer, short y, short x, char colourLayer) {
 	if (result >= 0) return result;
 
 	Layer *lyr = layer[colourLayer - 1];
-	if ((*lyr->update)[y][x] == 0) return 0;
 
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
 
-	RGB col = sprite->colour[sprite->colourDepth - 1];
-	int termColour = 0;
-	if (col.term == 255)	termColour = rgb_to_term256(col.r, col.g, col.b);
-	else if (col.term == 16)termColour = rgb_to_term16(col.r, col.g, col.b);
-	else					termColour = rgb_to_term8(col.r, col.g, col.b);
-	attroff(COLOR_PAIR(termColour));
-
-	(*lyr->update)[y][x] = 0;
-	return 0;
+	attroff(COLOR_PAIR(sprite->colour[sprite->colourDepth - 1]));
+	return 0; // stop
 }
 
 // Returns 1 if nothing is drawn, 0 otherwise
@@ -68,29 +57,12 @@ int draw_icon(Layer **layer,short y, short x, char iconLayer) {
 	if (result >= 0) return result; // either continue or stop
 
 	Layer *lyr = layer[iconLayer - 1];
-	if ((*lyr->update)[y][x] == 0) return 0; //stop
 
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
 	if (sprite->iconDepth == 0) return 1; // continue
 
 	mvprintw(y, 2 * x, sprite->icon[sprite->iconDepth - 1]);
-
-	(*lyr->update)[y][x] = 0;
 	return 0;
-}
-
-int position_test(Layer **layer, short y, short x, char depth) {
-	if (depth < 1) return 0;
-
-	Layer *lyr = layer[depth - 1];
-	short yRelative = y - lyr->yOffset;
-	short xRelative = x - lyr->xOffset;
-	if (lyr->visibility == 0 ||
-			yRelative < 0 || yRelative >= lyr->yLength ||
-			xRelative < 0 || xRelative >= lyr->xLength) {
-		return 1;
-	}
-	return -1;
 }
 
 void add_colour_to_layer(Layer *layer, short y, short x, short term, 
@@ -99,20 +71,26 @@ void add_colour_to_layer(Layer *layer, short y, short x, short term,
 			x < 0 || x >= layer->xLength) {
 		return;
 	}
-	(*layer->update)[y + layer->yOffset][x + layer->xOffset] = 1;
+
+	Vector2D position = {
+		.y = y + layer->yOffset,
+		.x = x + layer->xOffset
+	};
+	vector2D_push(layer->update, position);
 
 	Sprite *sprite = &(layer->sprite[y][x]);
 	sprite->colourDepth++;
 	if (sprite->colourDepth >= sprite->colourMaxDepth) {
 		sprite->colourMaxDepth = sprite->colourDepth * 2;
 		sprite->colour = realloc(sprite->colour,
-				sizeof(RGB) * sprite->colourMaxDepth);
+				sizeof(char) * sprite->colourMaxDepth);
 	}
-	RGB col = {
-		.term = term,
-		.r = r, .g = g, .b = b
-	};
-	sprite->colour[sprite->colourDepth - 1] = col;
+
+	int termColour = 0;
+	if (term == 256)		termColour = rgb_to_term256(r, g, b);
+	else if (term == 16)	termColour = rgb_to_term16(r, g, b);
+	else					termColour = rgb_to_term8(r, g, b);
+	sprite->colour[sprite->colourDepth - 1] = termColour;
 	return;
 }
 
@@ -124,7 +102,11 @@ void remove_colour_from_layer(Layer *layer, short y, short x) {
 	Sprite *sprite = &(layer->sprite[y][x]);
 
 	if (sprite->colourDepth) {
-		(*layer->update)[y + layer->yOffset][x + layer->xOffset] = 1;
+		Vector2D position = {
+			.y = y + layer->yOffset,
+			.x = x + layer->xOffset
+		};
+		vector2D_push(layer->update, position);
 		sprite->colourDepth--;
 		while (sprite->colourDepth * 2 < sprite->colourMaxDepth) {
 			sprite->colourMaxDepth = sprite->colourDepth * 3 / 2;
@@ -133,7 +115,7 @@ void remove_colour_from_layer(Layer *layer, short y, short x) {
 				sprite->colour = NULL;
 			} else {
 				sprite->colour = realloc(sprite->colour,
-						sizeof(RGB) * sprite->colourMaxDepth);
+						sizeof(char) * sprite->colourMaxDepth);
 			}
 		}
 	}
@@ -145,7 +127,11 @@ void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
 			x < 0 || x >= layer->xLength) {
 		return;
 	}
-	(*layer->update)[y + layer->yOffset][x + layer->xOffset] = 1;
+	Vector2D position = {
+		.y = y + layer->yOffset,
+		.x = x + layer->xOffset
+	};
+	vector2D_push(layer->update, position);
 
 	Sprite *sprite = &(layer->sprite[y][x]);
 	sprite->iconDepth++;
@@ -167,7 +153,11 @@ void remove_icon_from_layer(Layer *layer, short y, short x) {
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
 	if (sprite->iconDepth) {
-		(*layer->update)[y + layer->yOffset][x + layer->xOffset] = 1;
+		Vector2D position = {
+			.y = y + layer->yOffset,
+			.x = x + layer->xOffset
+		};
+		vector2D_push(layer->update, position);
 
 		free(sprite->icon[sprite->iconDepth - 1]);
 		sprite->icon[sprite->iconDepth - 1] = NULL;
@@ -211,7 +201,6 @@ void remove_button_from_layer(Layer *layer, short y, short x) {
 	Sprite *sprite = &(layer->sprite[y][x]);
 
 	if (sprite->buttonDepth) {
-		(*layer->update)[y + layer->yOffset][x + layer->xOffset] = 1;
 		sprite->buttonDepth--;
 		while (sprite->buttonDepth * 2 < sprite->buttonMaxDepth) {
 			sprite->buttonMaxDepth = sprite->buttonDepth * 3 / 2;
@@ -244,3 +233,18 @@ void layer_memory_swap(Layer *layer1, Layer *layer2) {
 	return;
 }
 
+// STATIC -------------------------------------------------------------------
+
+static int position_test(Layer **layer, short y, short x, char depth) {
+	if (depth < 1) return 0;
+
+	Layer *lyr = layer[depth - 1];
+	short yRelative = y - lyr->yOffset;
+	short xRelative = x - lyr->xOffset;
+	if (lyr->visibility == 0 ||
+			yRelative < 0 || yRelative >= lyr->yLength ||
+			xRelative < 0 || xRelative >= lyr->xLength) {
+		return 1;
+	}
+	return -1;
+}

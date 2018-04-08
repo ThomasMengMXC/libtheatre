@@ -6,11 +6,11 @@ CC = gcc
 all: libtheatre.so
 
 install: all 
-	mkdir -p $(DIRECTORY)/include/theatre
+	mkdir -p $(DIRECTORY)/include/theatre $(DIRECTORY)/lib
 	cp *.h $(DIRECTORY)/include/theatre
 	cp libtheatre.so $(DIRECTORY)/lib
 
-libtheatre.so: play.o stage.o scene.o props.o screen.o layer.o sprite.o colour.o
+libtheatre.so: play.o stage.o scene.o props.o screen.o layer.o sprite.o vector2D.o colour.o
 	$(CC) -shared *.o $(LFLAGS) -o libtheatre.so
 
 play.o: play.c play.h
@@ -33,6 +33,9 @@ layer.o: layer.c layer.h sprite.h
 
 sprite.o: sprite.c sprite.h
 	$(CC) $(CFLAGS) -c sprite.c
+
+vector2D.o: vector2D.c vector2D.h
+	$(CC) $(CFLAGS) -c vector2D.c
 
 colour.o: colour.c colour.h
 	$(CC) $(CFLAGS) -c colour.c
