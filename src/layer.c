@@ -216,6 +216,45 @@ void remove_button_from_layer(Layer *layer, short y, short x) {
 	return;
 }
 
+void add_hover_to_layer(Layer *layer, short y, short x, Hover hover) {
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+	Sprite *sprite = &(layer->sprite[y][x]);
+	sprite->hoverDepth++;
+	if (sprite->hoverDepth >= sprite->hoverMaxDepth) {
+		sprite->hoverMaxDepth = sprite->hoverDepth * 2;
+		sprite->hover = realloc(sprite->hover,
+				sizeof(Hover) * sprite->hoverMaxDepth);
+	}
+	sprite->hover[sprite->hoverDepth - 1] = hover;
+	return;
+}
+
+void remove_hover_from_layer(Layer *layer, short y, short x) {
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+	Sprite *sprite = &(layer->sprite[y][x]);
+
+	if (sprite->hoverDepth) {
+		sprite->hoverDepth--;
+		while (sprite->hoverDepth * 2 < sprite->hoverMaxDepth) {
+			sprite->hoverMaxDepth = sprite->hoverDepth * 3 / 2;
+			if (sprite->hoverMaxDepth == 0) {
+				free(sprite->hover);
+				sprite->hover = NULL;
+			} else {
+				sprite->hover = realloc(sprite->hover,
+						sizeof(Hover) * sprite->hoverMaxDepth);
+			}
+		}
+	}
+	return;
+}
+
 void layer_swap(Layer **layer1, Layer **layer2) {
 	void *swap;
 	swap = *layer1;

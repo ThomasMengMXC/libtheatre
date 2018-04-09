@@ -3,14 +3,16 @@
 
 #include <stdint.h>
 
-typedef int (*Button)(void *, short y, short x);
+typedef int (*Button)(void *args, short y, short x);
+typedef int (*Hover)(void *args, char start, short y, short x);
 
 typedef struct {
-	char colourDepth, iconDepth, buttonDepth;
-	char colourMaxDepth, iconMaxDepth, buttonMaxDepth;
+	char colourDepth, iconDepth, buttonDepth, hoverDepth;
+	char colourMaxDepth, iconMaxDepth, buttonMaxDepth, hoverMaxDepth;
 	char *colour;
 	char **icon;
 	Button *button;
+	Hover *hover;
 } Sprite;
 
 Sprite **init_sprite(short yLength, short xLength);

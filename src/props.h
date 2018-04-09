@@ -18,6 +18,10 @@ typedef	void (*DepartureFn)(Props *props);
 Props *init_props(void);
 void free_props(Props *props);
 
-int activate_button(short y, short x, Props *props);
+void mv_cursor_relative(Props *props, short y, short x);
+void mv_cursor_absolute(Props *props, short y, short x);
+
+int activate_button(Props *props, short y, short x);
+int activate_hover(Props *props, char start, short y, short x);
 
 #endif

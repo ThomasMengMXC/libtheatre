@@ -7,11 +7,11 @@ Screen *init_screen(short yLength, short xLength) {
 	Screen *scr = malloc(sizeof(Screen));
 	scr->depth = 0; scr->maxDepth = 0;
 	if (yLength == 0) yLength = getmaxy(stdscr);
-	if (xLength == 0) xLength = getmaxx(stdscr);
-	scr->yLength = yLength;
-	scr->xLength = xLength;
+	if (xLength == 0) xLength = getmaxx(stdscr) / 2;
+	scr->yLength = yLength; scr->xLength = xLength;
 	scr->layer = NULL;
 	scr->update = init_vector2D_stack();
+	scr->cursor = init_cursor();
 	return scr;
 }
 
@@ -19,6 +19,7 @@ void free_screen(Screen *scr) {
 	while (scr->depth) {
 		remove_layer_from_scr(scr);
 	}
+	free_cursor(scr->cursor);
 	free_vector2D_stack(scr->update);
 	free(scr);
 }

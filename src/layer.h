@@ -29,6 +29,9 @@ void remove_icon_from_layer(Layer *layer, short y, short x);
 void add_button_to_layer(Layer *layer, short y, short x, Button button);
 void remove_button_from_layer(Layer *layer, short y, short x);
 
+void add_hover_to_layer(Layer *layer, short y, short x, Hover hover);
+void remove_hover_from_layer(Layer *layer, short y, short x);
+
 void layer_swap(Layer **layer1, Layer **layer2);
 void layer_memory_swap(Layer *layer1, Layer *layer2);
 
