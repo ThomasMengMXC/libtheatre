@@ -16,6 +16,6 @@ typedef struct {
 } Sprite;
 
 Sprite **init_sprite(short yLength, short xLength);
-void free_sprite(short yLength, short xLength, Sprite **sprite);
+void free_sprite(Sprite **sprite, short yLength, short xLength);
 
 #endif

@@ -19,8 +19,14 @@ Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength) {
 }
 
 void free_layer(Layer *layer) {
-	free_sprite(layer->yLength, layer->xLength, layer->sprite);
+	free_sprite(layer->sprite, layer->yLength, layer->xLength);
 	free(layer);
+	return;
+}
+
+void clear_layer(Layer *layer) {
+	free_sprite(layer->sprite, layer->yLength, layer->xLength);
+	layer->sprite = init_sprite(layer->yLength, layer->xLength);
 	return;
 }
 

@@ -28,8 +28,9 @@ int draw_screen(Screen *scr) {
 	short colourLayer, iconLayer, y, x, update;
 	Vector2D vector;
 	update = 0;
-	while ((vector = vector2D_pop(scr->update)).y != -1) {
+	while (scr->update->depth > 0) {
 		update = 1;
+		vector = vector2D_pop(scr->update);
 		y = vector.y; x = vector.x;
 		colourLayer = iconLayer = scr->depth;
 
