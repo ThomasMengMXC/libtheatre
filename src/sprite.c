@@ -24,9 +24,6 @@ Sprite **init_sprite(short yLength, short xLength) {
 void free_sprite(Sprite **sprite, short yLength, short xLength) {
 	for (int y = 0; y < yLength; y++) {
 		for (int x = 0; x < xLength; x++) {
-			for (int i = 0; i < sprite[y][x].iconDepth; i++) {
-				free(sprite[y][x].icon[i]);
-			}
 			if (sprite[y][x].icon != NULL) {
 				free(sprite[y][x].icon);
 			}

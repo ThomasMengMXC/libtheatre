@@ -9,8 +9,8 @@ typedef int (*Hover)(void *args, char start, short y, short x);
 typedef struct {
 	char colourDepth, iconDepth, buttonDepth, hoverDepth;
 	char colourMaxDepth, iconMaxDepth, buttonMaxDepth, hoverMaxDepth;
-	char *colour;
-	char **icon;
+	uint8_t *colour;
+	char (*icon)[3];
 	Button *button;
 	Hover *hover;
 } Sprite;

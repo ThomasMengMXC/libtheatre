@@ -89,7 +89,7 @@ void add_colour_to_layer(Layer *layer, short y, short x, short term,
 	if (sprite->colourDepth >= sprite->colourMaxDepth) {
 		sprite->colourMaxDepth = sprite->colourDepth * 2;
 		sprite->colour = realloc(sprite->colour,
-				sizeof(char) * sprite->colourMaxDepth);
+				sizeof(uint8_t) * sprite->colourMaxDepth);
 	}
 
 	int termColour = 0;
@@ -121,7 +121,7 @@ void remove_colour_from_layer(Layer *layer, short y, short x) {
 				sprite->colour = NULL;
 			} else {
 				sprite->colour = realloc(sprite->colour,
-						sizeof(char) * sprite->colourMaxDepth);
+						sizeof(uint8_t) * sprite->colourMaxDepth);
 			}
 		}
 	}
@@ -144,10 +144,8 @@ void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
 	if (sprite->iconDepth >= sprite->iconMaxDepth) {
 		sprite->iconMaxDepth = sprite->iconDepth * 2;
 		sprite->icon = realloc(sprite->icon,
-				sizeof(char *) * sprite->iconMaxDepth);
+				sizeof(sprite->icon) * sprite->iconMaxDepth);
 	}
-	sprite->icon[sprite->iconDepth - 1]
-		= malloc(sizeof(char) * strlen(icon) + 1);
 	strcpy(sprite->icon[sprite->iconDepth - 1], icon);
 	return;
 }
@@ -165,9 +163,6 @@ void remove_icon_from_layer(Layer *layer, short y, short x) {
 		};
 		vector2D_push(layer->update, position);
 
-		free(sprite->icon[sprite->iconDepth - 1]);
-		sprite->icon[sprite->iconDepth - 1] = NULL;
-
 		sprite->iconDepth--;
 		while (sprite->iconDepth * 2 < sprite->iconMaxDepth) {
 			sprite->iconMaxDepth = sprite->iconDepth * 3 / 2;
@@ -176,7 +171,7 @@ void remove_icon_from_layer(Layer *layer, short y, short x) {
 				sprite->icon = NULL;
 			} else {
 				sprite->icon = realloc(sprite->icon,
-						sizeof(char *) * sprite->iconMaxDepth);
+						sizeof(sprite->icon) * sprite->iconMaxDepth);
 			}
 		}
 	}
