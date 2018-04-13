@@ -17,8 +17,7 @@ void free_layer(Layer *layer);
 
 void clear_layer(Layer *layer);
 
-int activate_colour(Layer **layer, short y, short x, char colourLayer);
-int deactivate_colour(Layer **layer, short y, short x, char colourLayer);
+int paint_colour(Layer **layer, short y, short x, char colourLayer);
 int draw_icon(Layer **layer, short y, short x, char iconLayer);
 
 void add_colour_to_layer(Layer *layer, short y, short x, short term, 

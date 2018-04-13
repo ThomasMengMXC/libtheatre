@@ -1,4 +1,4 @@
-#include <ncurses.h>
+#include <curses.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,7 +31,7 @@ void clear_layer(Layer *layer) {
 }
 
 // Returns 1 if nothing is drawn, 0 otherwise
-int activate_colour(Layer **layer, short y, short x, char colourLayer) {
+int paint_colour(Layer **layer, short y, short x, char colourLayer) {
 	int result = position_test(layer, y, x, colourLayer);
 	if (result >= 0) return result;
 
@@ -43,18 +43,6 @@ int activate_colour(Layer **layer, short y, short x, char colourLayer) {
 	attron(COLOR_PAIR(sprite->colour[sprite->colourDepth - 1]));
 
 	return 0; //stop
-}
-
-int deactivate_colour(Layer **layer, short y, short x, char colourLayer) {
-	int result = position_test(layer, y, x, colourLayer);
-	if (result >= 0) return result;
-
-	Layer *lyr = layer[colourLayer - 1];
-
-	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
-
-	attroff(COLOR_PAIR(sprite->colour[sprite->colourDepth - 1]));
-	return 0; // stop
 }
 
 // Returns 1 if nothing is drawn, 0 otherwise

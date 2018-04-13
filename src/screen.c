@@ -1,4 +1,4 @@
-#include <ncurses.h>
+#include <curses.h>
 #include <stdlib.h>
 
 #include "screen.h"
@@ -6,8 +6,8 @@
 Screen *init_screen(short yLength, short xLength) {
 	Screen *scr = malloc(sizeof(Screen));
 	scr->depth = 0; scr->maxDepth = 0;
-	if (yLength == 0) yLength = getmaxy(stdscr);
-	if (xLength == 0) xLength = getmaxx(stdscr) / 2;
+	if (yLength == 0) yLength = getmaxy(stdscr) | LINES;
+	if (xLength == 0) xLength = (getmaxx(stdscr) | COLS) / 2;
 	scr->yLength = yLength; scr->xLength = xLength;
 	scr->layer = NULL;
 	scr->update = init_vector2D_stack();
@@ -35,7 +35,8 @@ int draw_screen(Screen *scr) {
 		colourLayer = iconLayer = scr->depth;
 
 		// go the colour layers until you reach a colour
-		while (activate_colour(scr->layer, y, x, colourLayer)) --colourLayer;
+		while (paint_colour(scr->layer, y, x, colourLayer)) --colourLayer;
+		if (colourLayer < 1) attron(COLOR_PAIR(0));
 
 		// go the icon layers until you reach an icon
 		while (draw_icon(scr->layer, y, x, iconLayer)) --iconLayer;
@@ -43,10 +44,6 @@ int draw_screen(Screen *scr) {
 		// print a blank character if nothing is here
 		// this should only happen when all icons have been removed
 		if (iconLayer < 1) mvprintw(y, 2 * x, "  ");
-
-		// deactivate the colour (essentially lift your pen up)
-		deactivate_colour(scr->layer, y, x, colourLayer);
-		
 	}
 	if (update) refresh();
 	return 0;
