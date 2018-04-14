@@ -1,6 +1,6 @@
-DIRECTORY = /usr/local
+DIRECTORY = $(HOME)
 CFLAGS = -Wall -pedantic -g -std=gnu11 -fPIC -O3
-LFLAGS = -I/home/thomas/PDCurses -lSDL /home/thomas/PDCurses/sdl1/libpdcurses.a -lpthread
+LFLAGS = -lncurses
 CC = gcc
 SOURCES = $(wildcard *.c)
 OBJECTS = $(SOURCES:.c=.o)

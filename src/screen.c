@@ -36,7 +36,8 @@ int draw_screen(Screen *scr) {
 
 		// go the colour layers until you reach a colour
 		while (paint_colour(scr->layer, y, x, colourLayer)) --colourLayer;
-		if (colourLayer < 1) attron(COLOR_PAIR(0));
+
+		if (colourLayer < 1) attron(COLOR_PAIR(1));
 
 		// go the icon layers until you reach an icon
 		while (draw_icon(scr->layer, y, x, iconLayer)) --iconLayer;
