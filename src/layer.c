@@ -3,13 +3,12 @@
 #include <string.h>
 
 #include "layer.h"
-#include "colour.h"
 
 static int position_test(Layer **layer, short y, short x, char depth);
 static int add_x_to_y(char *depth, char *maxDepth,
-        void **object, size_t size);
+		void **object, size_t size);
 static int remove_x_from_y(char *depth, char *maxDepth,
-        void **object, size_t size);
+		void **object, size_t size);
 
 
 Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength) {
@@ -24,21 +23,14 @@ Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength) {
 
 void free_layer(Layer *layer) {
 	free_sprite(layer->sprite, layer->yLength, layer->xLength);
-    for (int y = 0; y < layer->yLength; y++) {
-        for (int x = 0; x < layer->xLength; x++) {
-            Vector2D position = {
-                .y = y + layer->yOffset,
-                .x = x + layer->xOffset
-            };
-            vector2D_push(layer->update, position);
-        }
-    }
+	refresh_layer(layer);
 	free(layer);
 	return;
 }
 
 void clear_layer(Layer *layer) {
 	free_sprite(layer->sprite, layer->yLength, layer->xLength);
+	refresh_layer(layer);
 	layer->sprite = init_sprite(layer->yLength, layer->xLength);
 	return;
 }
@@ -72,40 +64,49 @@ int draw_icon(Layer **layer,short y, short x, char iconLayer) {
 	return 0;
 }
 
-void add_colour_to_layer(Layer *layer, short y, short x, short term, 
-		uint8_t r, uint8_t g, uint8_t b) {
+void refresh_layer(Layer *layer) {
+	for (int y = 0; y < layer->yLength; y++) {
+		for (int x = 0; x < layer->xLength; x++) {
+			Vector2D position = {
+				.y = y + layer->yOffset,
+				.x = x + layer->xOffset
+			};
+			vector2D_push(layer->update, position);
+		}
+	}
+}
+
+// ADDING/REMOVING TO/FROM LAYERS ----------------------------------------
+
+void add_colour_to_layer(Layer *layer, short y, short x, uint8_t colour) {
 	if (	y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
-    add_x_to_y(&(sprite->colourDepth), &(sprite->colourMaxDepth),
-            (void **) &(sprite->colour), sizeof(uint8_t));
+	add_x_to_y(&(sprite->colourDepth), &(sprite->colourMaxDepth),
+			(void **) &(sprite->colour), sizeof(uint8_t));
 	Vector2D position = {
 		.y = y + layer->yOffset,
 		.x = x + layer->xOffset
 	};
 	vector2D_push(layer->update, position);
-	int termColour = 0;
-	if (term == 256)		termColour = rgb_to_term256(r, g, b);
-	else if (term == 16)	termColour = rgb_to_term16(r, g, b);
-	else					termColour = rgb_to_term8(r, g, b);
-	sprite->colour[sprite->colourDepth - 1] = termColour;
+	sprite->colour[sprite->colourDepth - 1] = colour;
 	return;
 }
 
 void remove_colour_from_layer(Layer *layer, short y, short x) {
-    if (    y < 0 || y >= layer->yLength ||
-            x < 0 || x >= layer->xLength) return;
-    Sprite *sprite = &(layer->sprite[y][x]);
-    if (remove_x_from_y(&(sprite->colourDepth), &(sprite->colourMaxDepth),
-            (void **) &(sprite->colour), sizeof(uint8_t))) {
-        Vector2D position = {
-            .y = y + layer->yOffset,
-            .x = x + layer->xOffset
-        };
-        vector2D_push(layer->update, position);
-    }
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) return;
+	Sprite *sprite = &(layer->sprite[y][x]);
+	if (remove_x_from_y(&(sprite->colourDepth), &(sprite->colourMaxDepth),
+			(void **) &(sprite->colour), sizeof(uint8_t))) {
+		Vector2D position = {
+			.y = y + layer->yOffset,
+			.x = x + layer->xOffset
+		};
+		vector2D_push(layer->update, position);
+	}
 }
 
 void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
@@ -114,8 +115,8 @@ void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
-    add_x_to_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
-            (void **) &(sprite->icon), sizeof(char[3]));
+	add_x_to_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
+			(void **) &(sprite->icon), sizeof(char[3]));
 	Vector2D position = {
 		.y = y + layer->yOffset,
 		.x = x + layer->xOffset
@@ -126,17 +127,17 @@ void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
 }
 
 void remove_icon_from_layer(Layer *layer, short y, short x) {
-    if (    y < 0 || y >= layer->yLength ||
-            x < 0 || x >= layer->xLength) return;
-    Sprite *sprite = &(layer->sprite[y][x]);
-    if (remove_x_from_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
-            (void **) &(sprite->icon), sizeof(char[3]))) {
-        Vector2D position = {
-            .y = y + layer->yOffset,
-            .x = x + layer->xOffset
-        };
-        vector2D_push(layer->update, position);
-    }
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) return;
+	Sprite *sprite = &(layer->sprite[y][x]);
+	if (remove_x_from_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
+			(void **) &(sprite->icon), sizeof(char[3]))) {
+		Vector2D position = {
+			.y = y + layer->yOffset,
+			.x = x + layer->xOffset
+		};
+		vector2D_push(layer->update, position);
+	}
 }
 
 void add_button_to_layer(Layer *layer, short y, short x, Button button) {
@@ -145,18 +146,18 @@ void add_button_to_layer(Layer *layer, short y, short x, Button button) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
-    add_x_to_y(&(sprite->buttonDepth), &(sprite->buttonMaxDepth),
-            (void **) &(sprite->button), sizeof(Button));
+	add_x_to_y(&(sprite->buttonDepth), &(sprite->buttonMaxDepth),
+			(void **) &(sprite->button), sizeof(Button));
 	sprite->button[sprite->buttonDepth - 1] = button;
 	return;
 }
 
 void remove_button_from_layer(Layer *layer, short y, short x) {
-    if (    y < 0 || y >= layer->yLength ||
-            x < 0 || x >= layer->xLength) return;
-    Sprite *sprite = &(layer->sprite[y][x]);
-    remove_x_from_y(&(sprite->buttonDepth), &(sprite->buttonMaxDepth),
-            (void **) &(sprite->button), sizeof(Button));
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) return;
+	Sprite *sprite = &(layer->sprite[y][x]);
+	remove_x_from_y(&(sprite->buttonDepth), &(sprite->buttonMaxDepth),
+			(void **) &(sprite->button), sizeof(Button));
 }
 
 void add_hover_to_layer(Layer *layer, short y, short x, Hover hover) {
@@ -165,18 +166,18 @@ void add_hover_to_layer(Layer *layer, short y, short x, Hover hover) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
-    add_x_to_y(&(sprite->hoverDepth), &(sprite->hoverMaxDepth),
-            (void **) &(sprite->hover), sizeof(Hover));
+	add_x_to_y(&(sprite->hoverDepth), &(sprite->hoverMaxDepth),
+			(void **) &(sprite->hover), sizeof(Hover));
 	sprite->hover[sprite->hoverDepth - 1] = hover;
 	return;
 }
 
 void remove_hover_from_layer(Layer *layer, short y, short x) {
-    if (    y < 0 || y >= layer->yLength ||
-            x < 0 || x >= layer->xLength) return;
-    Sprite *sprite = &(layer->sprite[y][x]);
-    remove_x_from_y(&(sprite->hoverDepth), &(sprite->hoverMaxDepth),
-            (void **) &(sprite->hover), sizeof(Hover));
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) return;
+	Sprite *sprite = &(layer->sprite[y][x]);
+	remove_x_from_y(&(sprite->hoverDepth), &(sprite->hoverMaxDepth),
+			(void **) &(sprite->hover), sizeof(Hover));
 }
 
 void layer_swap(Layer **layer1, Layer **layer2) {
@@ -213,21 +214,21 @@ static int position_test(Layer **layer, short y, short x, char depth) {
 }
 
 static int add_x_to_y(char *depth, char *maxDepth,
-        void **object, size_t size) {
+		void **object, size_t size) {
 	(*depth)++;
 	if (*depth >= *maxDepth) {
 		*maxDepth = *depth * 2;
 		*object = realloc(*object, size * *maxDepth);
-    }
-    return 0;
+	}
+	return 0;
 }
 
 static int remove_x_from_y(char *depth, char *maxDepth,
-        void **object, size_t size) {
+		void **object, size_t size) {
 	if (*depth) {
 		(*depth)--;
 		while (*depth * 2 < *maxDepth) {
-		    *maxDepth = *depth * 3 / 2;
+			*maxDepth = *depth * 3 / 2;
 			if (*maxDepth == 0) {
 				free(*object);
 				*object = NULL;
@@ -235,7 +236,7 @@ static int remove_x_from_y(char *depth, char *maxDepth,
 				*object = realloc(*object, size * *maxDepth);
 			}
 		}
-        return 1;
+		return 1;
 	}
-    return 0;
+	return 0;
 }

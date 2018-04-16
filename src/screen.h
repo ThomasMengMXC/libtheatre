@@ -9,7 +9,7 @@ typedef struct {
 	unsigned short depth, maxDepth;  // The amount of layers that there are
 	short yLength, xLength; // Size of the screen
 	Layer **layer; // The layers for the screen
-	Vector2DStack *update; // The stack for tiles to be drawn
+	UpdateStack *update; // The stack for tiles to be drawn
 	Cursor *cursor; // The cursor for interacting with the screen
 } Screen;
 

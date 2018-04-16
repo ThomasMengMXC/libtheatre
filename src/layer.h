@@ -4,12 +4,20 @@
 #include "sprite.h"
 #include "vector2D.h"
 
+#define add_to_layer(layer, y, x, object)\
+	do { \
+	_Generic((object),	uint8_t: add_colour_to_layer, \
+						char *: add_icon_to_layer, \
+						Button: add_button_to_layer, \
+						Hover: add_hover_to_layer)(layer, y, x, object); \
+	} while(0)
+
 typedef struct {
 	char visibility; // has this layer been updated
 	short yOffset, xOffset;
 	short yLength, xLength;
 	Sprite **sprite;
-	Vector2DStack *update;
+	UpdateStack *update;
 } Layer;
 
 Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength);
@@ -19,9 +27,12 @@ void clear_layer(Layer *layer);
 
 int paint_colour(Layer **layer, short y, short x, char colourLayer);
 int draw_icon(Layer **layer, short y, short x, char iconLayer);
+void refresh_layer(Layer *layer);
 
-void add_colour_to_layer(Layer *layer, short y, short x, short term, 
-		uint8_t r, uint8_t g, uint8_t b);
+
+// ADDING/REMOVING TO/FROM LAYERS ----------------------------------------
+
+void add_colour_to_layer(Layer *layer, short y, short x, uint8_t colour);
 void remove_colour_from_layer(Layer *layer, short y, short x);
 
 void add_icon_to_layer(Layer *layer, short y, short x, char *icon);

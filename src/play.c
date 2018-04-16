@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <signal.h>
+#include <time.h>
 
 #include "play.h"
 
@@ -30,32 +31,34 @@ static int init_ncurses(void) {
 	cbreak();
 	noecho();
 	curs_set(0);
-	timeout(16); // 60fps baby
+	timeout(0); // 60fps baby
 	keypad(stdscr, TRUE);
 	return 0;
 }
 
 int enact_play(Stage *stage) {
 	Scene *scene;
+	int ch, keyboardSignal = -1;
+	time_t t0, t1;
 	if (stage->currentScene == NULL) {
 		return 0;
 	}
 	stage->currentScene->arrival(stage->currentScene->props);
-	int ch = 0;
-	int keyboardSignal = -1;
 	while(1) {
-		ch = getch();
+		t0 = clock();
 		scene = stage->currentScene; // set the current scene
 		if (stage->currentScene) {
 			scene->update(scene->props);
 			// change scenes base on the return value
-			if ((keyboardSignal = scene->keyboard(scene->props, ch)) >= 0) {
-				scene_change(stage, keyboardSignal);
-			} else if (keyboardSignal == -2) {
-				// exit if the signal is -2
-				break;
+			while ((ch = getch()) != ERR) {
+				if ((keyboardSignal = scene->keyboard(scene->props, ch)) >= 0) {
+					scene_change(stage, keyboardSignal);
+				}
 			}
+			if (keyboardSignal == -2) break;
 		}
+		t1 = clock();
+		napms(17 - (t1 - t0) * 1000/CLOCKS_PER_SEC);
 	}
 	stage->currentScene->departure(stage->currentScene->props);
 	return 0;

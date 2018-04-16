@@ -12,7 +12,7 @@ typedef struct Scene {
 } Scene;
 
 Scene *init_scene(UpdateFn upd, KeyboardFn kb,
-        ArrivalFn arrival, DepartureFn departure);
+		ArrivalFn arrival, DepartureFn departure);
 void free_scene(Scene *scene);
 
 #endif
