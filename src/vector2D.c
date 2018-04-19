@@ -39,7 +39,7 @@ void vector2D_push(UpdateStack *update, Vector2D vector) {
 			vector.x >= 0 && vector.x < update->xMax &&
 			update->grid[vector.y][vector.x] == 0) {
 		update->depth++;
-		if (update->depth >= update->maxDepth) {
+		if (update->depth > update->maxDepth) {
 			update->maxDepth = update->depth * 10;
 			update->vector2D = realloc(update->vector2D,
 					sizeof(Vector2D *) * update->maxDepth);
@@ -56,8 +56,8 @@ Vector2D vector2D_pop(UpdateStack *update) {
 		returnValue = update->vector2D[update->depth - 1];
 		update->vector2D[update->depth - 1] = (Vector2D) {.y = -1, .x = -1};
 		update->depth--;
-		if (update->depth * 10 < update->maxDepth) {
-			update->maxDepth = update->depth * 2;
+		if (update->depth * 20 < update->maxDepth) {
+			update->maxDepth = update->depth * 10;
 			if (update->maxDepth == 0) {
 				free(update->vector2D);
 				update->vector2D = NULL;
