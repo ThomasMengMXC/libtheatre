@@ -21,17 +21,33 @@ Layer *init_layer(short yOffset, short xOffset, short yLength, short xLength) {
 	return layer;
 }
 
-void free_layer(Layer *layer) {
-	free_sprite(layer->sprite, layer->yLength, layer->xLength);
-	refresh_layer(layer);
-	free(layer);
-	return;
-}
-
 void clear_layer(Layer *layer) {
 	free_sprite(layer->sprite, layer->yLength, layer->xLength);
 	refresh_layer(layer);
 	layer->sprite = init_sprite(layer->yLength, layer->xLength);
+	return;
+}
+
+void mv_layer_relative(Layer *layer, short y, short x) {
+	refresh_layer(layer);
+	layer->yOffset += y;
+	layer->xOffset += x;
+	refresh_layer(layer);
+	return;
+}
+
+void mv_layer_absolute(Layer *layer, short y, short x) {
+	refresh_layer(layer);
+	layer->yOffset = y;
+	layer->xOffset = x;
+	refresh_layer(layer);
+	return;
+}
+
+void free_layer(Layer *layer) {
+	free_sprite(layer->sprite, layer->yLength, layer->xLength);
+	refresh_layer(layer);
+	free(layer);
 	return;
 }
 
