@@ -5,7 +5,7 @@
 #include "vector2D.h"
 #include "cursor.h"
 
-typedef struct {
+typedef struct Screen {
 	unsigned short depth, maxDepth;  // The amount of layers that there are
 	short yLength, xLength; // Size of the screen
 	Layer **layer; // The layers for the screen

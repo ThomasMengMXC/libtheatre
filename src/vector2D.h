@@ -2,11 +2,11 @@
 #define VECTOR2D_H
 #include <stdint.h>
 
-typedef struct {
+typedef struct Vector2D {
 	uint16_t y, x;
 } Vector2D;
 
-typedef struct {
+typedef struct UpdateStack {
 	Vector2D *vector2D;
 	uint16_t depth, maxDepth;
 	uint16_t yMax, xMax;

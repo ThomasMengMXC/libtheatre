@@ -12,7 +12,7 @@
 						Hover: add_hover_to_layer)(layer, y, x, object); \
 	} while(0)
 
-typedef struct {
+typedef struct Layer {
 	char visibility; // has this layer been updated
 	short yOffset, xOffset;
 	short yLength, xLength;

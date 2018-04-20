@@ -36,14 +36,10 @@ int draw_screen(Screen *scr) {
 
 		// go the colour layers until you reach a colour
 		while (paint_colour(scr->layer, y, x, colourLayer)) --colourLayer;
-
 		if (colourLayer < 1) attron(COLOR_PAIR(1));
 
 		// go the icon layers until you reach an icon
 		while (draw_icon(scr->layer, y, x, iconLayer)) --iconLayer;
-
-		// print a blank character if nothing is here
-		// this should only happen when all icons have been removed
 		if (iconLayer < 1) mvprintw(y, 2 * x, "  ");
 	}
 	if (update) refresh();

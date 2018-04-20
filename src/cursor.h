@@ -1,7 +1,7 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
-typedef struct {
+typedef struct Cursor {
 	char canClick;
 	unsigned char yPos, xPos;
 	unsigned char yOld, xOld;

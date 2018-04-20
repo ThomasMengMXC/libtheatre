@@ -40,23 +40,19 @@ int enact_play(Stage *stage) {
 	Scene *scene;
 	int ch, keyboardSignal = -1;
 	time_t t0, t1;
-	if (stage->currentScene == NULL) {
-		return 0;
-	}
+	if (!stage->currentScene) return 0;
 	stage->currentScene->arrival(stage->currentScene->props);
 	while(1) {
 		t0 = clock();
-		scene = stage->currentScene; // set the current scene
-		if (stage->currentScene) {
-			scene->update(scene->props);
-			// change scenes base on the return value
-			while ((ch = getch()) != ERR) {
-				if ((keyboardSignal = scene->keyboard(scene->props, ch)) >= 0) {
-					scene_change(stage, keyboardSignal);
-				}
+		scene = stage->currentScene;
+		scene->update(scene->props);
+		// change scenes base on the return value
+		while ((ch = getch()) != ERR) {
+			if ((keyboardSignal = scene->keyboard(scene->props, ch)) >= 0) {
+				scene_change(stage, keyboardSignal);
 			}
-			if (keyboardSignal == -2) break;
 		}
+		if (keyboardSignal == -2) break;
 		t1 = clock();
 		napms(17 - (t1 - t0) * 1000/CLOCKS_PER_SEC);
 	}

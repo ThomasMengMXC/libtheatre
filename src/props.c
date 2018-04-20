@@ -19,10 +19,10 @@ void mv_cursor_relative(Props *props, short y, short x) {
 			|| cursor->yPos + y < 0) return;
 	if (cursor->xPos + x >= props->screen->xLength
 			|| cursor->xPos + x < 0) return;
-	activate_hover(props, 0, cursor->yPos, cursor->xPos);
+	//activate_hover(props, 0, cursor->yPos, cursor->xPos);
 	cursor->yPos += y;
 	cursor->xPos += x;
-	activate_hover(props, 1, cursor->yPos, cursor->xPos);
+	//activate_hover(props, 1, cursor->yPos, cursor->xPos);
 	return;
 }
 
@@ -59,7 +59,7 @@ int activate_button(Props *props, short y, short x) {
 		if (sprite->buttonDepth == 0) {
 			continue;
 		}
-		sprite->button[sprite->colourDepth - 1](props, y, x);
+		sprite->button[sprite->colourDepth - 1](props, lyr, y, x);
 		break;
 	}
 	return 0;
@@ -85,7 +85,7 @@ int activate_hover(Props *props, char start,  short y, short x) {
 		if (sprite->hoverDepth == 0) {
 			continue;
 		}
-		sprite->hover[sprite->colourDepth - 1](props, start,  y, x);
+		sprite->hover[sprite->colourDepth - 1](props, lyr, start, y, x);
 		break;
 	}
 	return 0;

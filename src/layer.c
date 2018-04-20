@@ -217,13 +217,12 @@ void layer_memory_swap(Layer *layer1, Layer *layer2) {
 
 static int position_test(Layer **layer, short y, short x, char depth) {
 	if (depth < 1) return 0;
-
 	Layer *lyr = layer[depth - 1];
-	short yRelative = y - lyr->yOffset;
-	short xRelative = x - lyr->xOffset;
+	y -= lyr->yOffset;
+	x -= lyr->xOffset;
 	if (lyr->visibility == 0 ||
-			yRelative < 0 || yRelative >= lyr->yLength ||
-			xRelative < 0 || xRelative >= lyr->xLength) {
+			y < 0 || y >= lyr->yLength ||
+			x < 0 || x >= lyr->xLength) {
 		return 1;
 	}
 	return -1;

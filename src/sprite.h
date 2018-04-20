@@ -3,10 +3,11 @@
 
 #include <stdint.h>
 
-typedef int (*Button)(void *args, short y, short x);
-typedef int (*Hover)(void *args, char start, short y, short x);
+struct Props; struct Layer; // prototypes for the following two prototypes :^)
+typedef int (*Button)(struct Props *, struct Layer *, short y, short x);
+typedef int (*Hover)(struct Props *, struct Layer *, char start, short y, short x);
 
-typedef struct {
+typedef struct Sprite {
 	char colourDepth, iconDepth, buttonDepth, hoverDepth;
 	char colourMaxDepth, iconMaxDepth, buttonMaxDepth, hoverMaxDepth;
 	uint8_t *colour;
