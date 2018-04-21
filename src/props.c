@@ -42,10 +42,7 @@ void mv_cursor_absolute(Props *props, short y, short x) {
 // Returns 1 if nothing is activated, 0 otherwise
 int activate_button(Props *props, short y, short x) {
 	short buttonLayer = props->screen->depth;
-	while (1) {
-		if (buttonLayer < 1) {
-			break;
-		}
+	while (buttonLayer) {
 		Layer *lyr = props->screen->layer[buttonLayer - 1];
 		buttonLayer--;
 		short yRelative = y - lyr->yOffset;
@@ -56,9 +53,7 @@ int activate_button(Props *props, short y, short x) {
 			continue;
 		}
 		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
-		if (sprite->buttonDepth == 0) {
-			continue;
-		}
+		if (sprite->buttonDepth == 0) continue;
 		sprite->button[sprite->colourDepth - 1](props, lyr, y, x);
 		break;
 	}
@@ -68,10 +63,7 @@ int activate_button(Props *props, short y, short x) {
 // Returns 1 if nothing is activated, 0 otherwise
 int activate_hover(Props *props, char start,  short y, short x) {
 	short hoverLayer = props->screen->depth;
-	while (1) {
-		if (hoverLayer < 1) {
-			break;
-		}
+	while (hoverLayer) {
 		Layer *lyr = props->screen->layer[hoverLayer - 1];
 		hoverLayer--;
 		short yRelative = y - lyr->yOffset;
@@ -82,9 +74,7 @@ int activate_hover(Props *props, char start,  short y, short x) {
 			continue;
 		}
 		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
-		if (sprite->hoverDepth == 0) {
-			continue;
-		}
+		if (sprite->hoverDepth == 0) continue;
 		sprite->hover[sprite->colourDepth - 1](props, lyr, start, y, x);
 		break;
 	}

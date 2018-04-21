@@ -6,7 +6,7 @@
 
 #define add_to_layer(layer, y, x, object)\
 	do { \
-	_Generic((object),	uint8_t: add_colour_to_layer, \
+	_Generic((object),	Colour: add_colour_to_layer, \
 						char *: add_icon_to_layer, \
 						Button: add_button_to_layer, \
 						Hover: add_hover_to_layer)(layer, y, x, object); \
@@ -27,17 +27,17 @@ void mv_layer_relative(Layer *layer, short y, short x);
 void mv_layer_absolute(Layer *layer, short y, short x);
 void refresh_layer(Layer *layer);
 
-int paint_colour(Layer **layer, short y, short x, char colourLayer);
-int draw_icon(Layer **layer, short y, short x, char iconLayer);
+//int paint_colour(Layer **layer, short y, short x, uint8_t colourLayer);
+int draw_icon(Layer **layer, short y, short x, uint8_t iconLayer);
 
 
 // ADDING/REMOVING TO/FROM LAYERS ----------------------------------------
 
-void add_colour_to_layer(Layer *layer, short y, short x, uint8_t colour);
+void add_colour_to_layer(Layer *layer, short y, short x, Colour colour);
 void remove_colour_from_layer(Layer *layer, short y, short x);
 
-void add_icon_to_layer(Layer *layer, short y, short x, char *icon);
-void remove_icon_from_layer(Layer *layer, short y, short x);
+void add_icon_to_layer(Layer *layer, short y, short x, char *icon, size_t n);
+void remove_icon_from_layer(Layer *layer, short y, short x, size_t n);
 
 void add_button_to_layer(Layer *layer, short y, short x, Button button);
 void remove_button_from_layer(Layer *layer, short y, short x);

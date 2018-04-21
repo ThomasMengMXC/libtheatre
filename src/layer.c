@@ -4,10 +4,10 @@
 
 #include "layer.h"
 
-static int position_test(Layer **layer, short y, short x, char depth);
-static int add_x_to_y(char *depth, char *maxDepth,
+static int position_test(Layer **layer, short y, short x, uint8_t depth);
+static int add_x_to_y(uint8_t *depth, uint8_t *maxDepth,
 		void **object, size_t size);
-static int remove_x_from_y(char *depth, char *maxDepth,
+static int remove_x_from_y(uint8_t *depth, uint8_t *maxDepth,
 		void **object, size_t size);
 
 
@@ -51,8 +51,9 @@ void free_layer(Layer *layer) {
 	return;
 }
 
+/*
 // Returns 1 if nothing is drawn, 0 otherwise
-int paint_colour(Layer **layer, short y, short x, char colourLayer) {
+int paint_colour(Layer **layer, short y, short x, uint8_t colourLayer) {
 	int result = position_test(layer, y, x, colourLayer);
 	if (result >= 0) return result;
 
@@ -61,13 +62,14 @@ int paint_colour(Layer **layer, short y, short x, char colourLayer) {
 	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
 	if (sprite->colourDepth == 0) return 1; // continue searching
 
-	attron(COLOR_PAIR(sprite->colour[sprite->colourDepth - 1] + 1));
+	attron(COLOR_PAIR(mix_colours(sprite->colour, sprite->colourDepth) + 1));
 
 	return 0; //stop
 }
+*/
 
 // Returns 1 if nothing is drawn, 0 otherwise
-int draw_icon(Layer **layer,short y, short x, char iconLayer) {
+int draw_icon(Layer **layer,short y, short x, uint8_t iconLayer) {
 	int result = position_test(layer, y, x, iconLayer);
 	if (result >= 0) return result; // either continue or stop
 
@@ -83,30 +85,27 @@ int draw_icon(Layer **layer,short y, short x, char iconLayer) {
 void refresh_layer(Layer *layer) {
 	for (int y = 0; y < layer->yLength; y++) {
 		for (int x = 0; x < layer->xLength; x++) {
-			Vector2D position = {
+			Vector2D pos = {
 				.y = y + layer->yOffset,
 				.x = x + layer->xOffset
 			};
-			vector2D_push(layer->update, position);
+			vector2D_push(layer->update, pos);
 		}
 	}
 }
 
 // ADDING/REMOVING TO/FROM LAYERS ----------------------------------------
 
-void add_colour_to_layer(Layer *layer, short y, short x, uint8_t colour) {
+void add_colour_to_layer(Layer *layer, short y, short x, Colour colour) {
 	if (	y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength) {
 		return;
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
 	add_x_to_y(&(sprite->colourDepth), &(sprite->colourMaxDepth),
-			(void **) &(sprite->colour), sizeof(uint8_t));
-	Vector2D position = {
-		.y = y + layer->yOffset,
-		.x = x + layer->xOffset
-	};
-	vector2D_push(layer->update, position);
+			(void **) &(sprite->colour), sizeof(Colour));
+	Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+	vector2D_push(layer->update, pos);
 	sprite->colour[sprite->colourDepth - 1] = colour;
 	return;
 }
@@ -116,43 +115,41 @@ void remove_colour_from_layer(Layer *layer, short y, short x) {
 			x < 0 || x >= layer->xLength) return;
 	Sprite *sprite = &(layer->sprite[y][x]);
 	if (remove_x_from_y(&(sprite->colourDepth), &(sprite->colourMaxDepth),
-			(void **) &(sprite->colour), sizeof(uint8_t))) {
-		Vector2D position = {
-			.y = y + layer->yOffset,
-			.x = x + layer->xOffset
-		};
-		vector2D_push(layer->update, position);
+			(void **) &(sprite->colour), sizeof(Colour))) {
+		Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+		vector2D_push(layer->update, pos);
 	}
 }
 
-void add_icon_to_layer(Layer *layer, short y, short x, char *icon) {
-	if (	y < 0 || y >= layer->yLength ||
-			x < 0 || x >= layer->xLength) {
-		return;
+void add_icon_to_layer(Layer *layer, short y, short x, char *icon, size_t n) {
+	n = n % 2 ? (n + 1) >> 1 : n >> 1; // ceil of n/2
+	for (int i = 0; i < n; i++) {
+		if (	y < 0 || y >= layer->yLength ||
+				x < 0 || x >= layer->xLength) {
+			return;
+		}
+		Sprite *sprite = &(layer->sprite[y][x]);
+		add_x_to_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
+				(void **) &(sprite->icon), sizeof(char[3]));
+		Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+		vector2D_push(layer->update, pos);
+		strcpy(sprite->icon[sprite->iconDepth - 1], icon + i * 2);
+		x += 1;
 	}
-	Sprite *sprite = &(layer->sprite[y][x]);
-	add_x_to_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
-			(void **) &(sprite->icon), sizeof(char[3]));
-	Vector2D position = {
-		.y = y + layer->yOffset,
-		.x = x + layer->xOffset
-	};
-	vector2D_push(layer->update, position);
-	strcpy(sprite->icon[sprite->iconDepth - 1], icon);
-	return;
 }
 
-void remove_icon_from_layer(Layer *layer, short y, short x) {
-	if (	y < 0 || y >= layer->yLength ||
-			x < 0 || x >= layer->xLength) return;
-	Sprite *sprite = &(layer->sprite[y][x]);
-	if (remove_x_from_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
-			(void **) &(sprite->icon), sizeof(char[3]))) {
-		Vector2D position = {
-			.y = y + layer->yOffset,
-			.x = x + layer->xOffset
-		};
-		vector2D_push(layer->update, position);
+void remove_icon_from_layer(Layer *layer, short y, short x, size_t n) {
+	n = n % 2 ? (n + 1) >> 1 : n >> 1; // ceil of n/2
+	for (int i = 0; i < n; i++) {
+		if (	y < 0 || y >= layer->yLength ||
+				x < 0 || x >= layer->xLength) return;
+		Sprite *sprite = &(layer->sprite[y][x]);
+		if (remove_x_from_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
+				(void **) &(sprite->icon), sizeof(char[3]))) {
+			Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+			vector2D_push(layer->update, pos);
+		}
+		x += 1;
 	}
 }
 
@@ -215,7 +212,7 @@ void layer_memory_swap(Layer *layer1, Layer *layer2) {
 
 // STATIC -------------------------------------------------------------------
 
-static int position_test(Layer **layer, short y, short x, char depth) {
+static int position_test(Layer **layer, short y, short x, uint8_t depth) {
 	if (depth < 1) return 0;
 	Layer *lyr = layer[depth - 1];
 	y -= lyr->yOffset;
@@ -228,7 +225,7 @@ static int position_test(Layer **layer, short y, short x, char depth) {
 	return -1;
 }
 
-static int add_x_to_y(char *depth, char *maxDepth,
+static int add_x_to_y(uint8_t *depth, uint8_t *maxDepth,
 		void **object, size_t size) {
 	(*depth)++;
 	if (*depth >= *maxDepth) {
@@ -238,7 +235,7 @@ static int add_x_to_y(char *depth, char *maxDepth,
 	return 0;
 }
 
-static int remove_x_from_y(char *depth, char *maxDepth,
+static int remove_x_from_y(uint8_t *depth, uint8_t *maxDepth,
 		void **object, size_t size) {
 	if (*depth) {
 		(*depth)--;

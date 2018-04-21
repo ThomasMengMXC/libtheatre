@@ -21,5 +21,6 @@ int draw_screen(Screen *scr);
 Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 		short yLength, short xLength);
 void remove_layer_from_scr(Screen *scr);
+void paint_colour(Screen *scr, short y, short x);
 
 #endif

@@ -25,18 +25,16 @@ void free_screen(Screen *scr) {
 }
 
 int draw_screen(Screen *scr) {
-	short colourLayer, iconLayer, y, x, update;
+	short iconLayer, y, x, update;
 	Vector2D vector;
 	update = 0;
 	while (scr->update->depth > 0) {
 		update = 1;
 		vector = vector2D_pop(scr->update);
 		y = vector.y; x = vector.x;
-		colourLayer = iconLayer = scr->depth;
+		iconLayer = scr->depth;
 
-		// go the colour layers until you reach a colour
-		while (paint_colour(scr->layer, y, x, colourLayer)) --colourLayer;
-		if (colourLayer < 1) attron(COLOR_PAIR(1));
+		paint_colour(scr, y, x);
 
 		// go the icon layers until you reach an icon
 		while (draw_icon(scr->layer, y, x, iconLayer)) --iconLayer;
@@ -80,3 +78,35 @@ void remove_layer_from_scr(Screen *scr) {
 	}
 	return;
 }
+
+void paint_colour(Screen *scr, short y, short x) {
+	short layerDepth = scr->depth;
+	float r0 = 0, r1 = 1;
+	float g0 = 0, g1 = 1;
+	float b0 = 0, b1 = 1;
+	Colour col, *colour;
+	uint8_t colourDepth = 0;
+	while (layerDepth && r1 + g1 + b1 > 0.0001) {
+		Layer *lyr = scr->layer[layerDepth - 1];
+		layerDepth--;
+		short yRelative = y - lyr->yOffset, xRelative = x - lyr->xOffset;
+		if (lyr->visibility == 0 ||
+				yRelative < 0 || yRelative >= lyr->yLength ||
+				xRelative < 0 || xRelative >= lyr->xLength) {
+			continue;
+		}
+		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
+		colourDepth = sprite->colourDepth;
+		colour = sprite->colour;
+		if (colourDepth == 0) continue;
+		while (colourDepth && r1 + g1 + b1 > 0.0001) {
+			col = colour[colourDepth - 1];
+			r0 += col.r * r1 * col.a / 255; r1 = r1 * (255 - col.a) / 255;
+			g0 += col.g * g1 * col.a / 255; g1 = g1 * (255 - col.a) / 255;
+			b0 += col.b * b1 * col.a / 255; b1 = b1 * (255 - col.a) / 255;
+			colourDepth--;
+		}
+	}
+	attron(COLOR_PAIR(rgb_to_term256(r0, g0, b0) + 1));
+}
+
