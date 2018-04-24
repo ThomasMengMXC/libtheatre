@@ -3,7 +3,6 @@
 
 #include "layer.h"
 
-static int position_test(Layer **layer, short y, short x, uint16_t depth);
 static int add_x_to_y(uint16_t *depth, uint16_t *maxDepth,
 		void **object, size_t size);
 static int remove_x_from_y(uint16_t *depth, uint16_t *maxDepth,
@@ -49,20 +48,6 @@ void free_layer(Layer *layer) {
 	free_sprite(layer->sprite, layer->yLength, layer->xLength);
 	refresh_layer(layer);
 	free(layer);
-}
-
-// Returns 1 if nothing is drawn, 0 otherwise
-int draw_icon(Layer **layer,short y, short x, uint16_t iconLayer) {
-	int result = position_test(layer, y, x, iconLayer);
-	if (result >= 0) return result; // either continue or stop
-
-	Layer *lyr = layer[iconLayer - 1];
-
-	Sprite *sprite = lyr->sprite[y - lyr->yOffset] + x - lyr->xOffset;
-	if (sprite->iconDepth == 0) return 1; // continue
-
-	mvprintw(y, 2 * x, sprite->icon[sprite->iconDepth - 1]);
-	return 0;
 }
 
 void refresh_layer(Layer *layer) {
@@ -203,19 +188,6 @@ void layer_memory_swap(Layer *layer1, Layer *layer2) {
 }
 
 // STATIC -------------------------------------------------------------------
-
-static int position_test(Layer **layer, short y, short x, uint16_t depth) {
-	if (depth < 1) return 0;
-	Layer *lyr = layer[depth - 1];
-	y -= lyr->yOffset;
-	x -= lyr->xOffset;
-	if (lyr->visibility == 0 ||
-			y < 0 || y >= lyr->yLength ||
-			x < 0 || x >= lyr->xLength) {
-		return 1;
-	}
-	return -1;
-}
 
 static int add_x_to_y(uint16_t *depth, uint16_t *maxDepth,
 		void **object, size_t size) {

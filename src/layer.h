@@ -6,7 +6,7 @@
 #include "vector2D.h"
 
 typedef struct Layer {
-	char visibility; // has this layer been updated
+	char visibility;
 	short yOffset, xOffset;
 	uint16_t yLength, xLength;
 	Sprite **sprite;
@@ -20,8 +20,6 @@ void clear_layer(Layer *layer);
 void mv_layer_relative(Layer *layer, short y, short x);
 void mv_layer_absolute(Layer *layer, short y, short x);
 void refresh_layer(Layer *layer);
-
-int draw_icon(Layer **layer, short y, short x, uint16_t iconLayer);
 
 
 // ADDING/REMOVING TO/FROM LAYERS ----------------------------------------

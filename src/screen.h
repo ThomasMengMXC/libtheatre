@@ -18,10 +18,14 @@ void free_screen(Screen *scr);
 
 int draw_screen(Screen *scr);
 
+void clear_screen(Screen *scr);
+void resize_screen(Screen *scr);
+
 Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 		short yLength, short xLength);
 Layer *remove_layer_from_scr(Screen *scr);
 
 void paint_colour(Screen *scr, short y, short x);
+void draw_icon(Screen *scr, short y, short x);
 
 #endif

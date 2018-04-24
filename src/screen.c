@@ -24,23 +24,37 @@ void free_screen(Screen *scr) {
 }
 
 int draw_screen(Screen *scr) {
-	uint16_t iconLayer, y, x, update;
+	uint16_t y, x, update;
 	Vector2D vector;
 	update = 0;
 	while (scr->update->depth > 0) {
 		update = 1;
 		vector = vector2D_pop(scr->update);
 		y = vector.y; x = vector.x;
-		iconLayer = scr->depth;
 
 		paint_colour(scr, y, x);
 
-		// go the icon layers until you reach an icon
-		while (draw_icon(scr->layer, y, x, iconLayer)) --iconLayer;
-		if (iconLayer < 1) mvprintw(y, 2 * x, "  ");
+		draw_icon(scr, y, x);
 	}
 	if (update) refresh();
 	return 0;
+}
+
+void clear_screen(Screen *scr) {
+	for (uint16_t layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
+		clear_layer(scr->layer[layerDepth - 1]);
+	}
+}
+
+void resize_screen(Screen *scr) {
+	free_update_stack(scr->update, scr->yLength, scr->xLength);
+	scr->yLength = (getmaxy(stdscr) | LINES);
+	scr->xLength = (getmaxx(stdscr) | COLS) / 2;
+	scr->update = init_update_stack(scr->yLength, scr->xLength);
+	for (uint16_t layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
+		scr->layer[layerDepth-1]->update = scr->update;
+		refresh_layer(scr->layer[layerDepth - 1]);
+	}
 }
 
 // creates a new layer on the screen and returns a pointer to said new layer
@@ -97,7 +111,6 @@ void paint_colour(Screen *scr, short y, short x) {
 		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
 		colourDepth = sprite->colourDepth;
 		colour = sprite->colour;
-		if (colourDepth == 0) continue;
 		while (colourDepth && r1 + g1 + b1 > 0.0001) {
 			col = colour[colourDepth - 1];
 			r0 += col.r * r1 * col.a / 255; r1 = r1 * (255 - col.a) / 255;
@@ -109,3 +122,23 @@ void paint_colour(Screen *scr, short y, short x) {
 	attron(COLOR_PAIR(rgb_to_term256(r0, g0, b0) + 1));
 }
 
+void draw_icon(Screen *scr, short y, short x) {
+	char drawn = 0;
+	for (short layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
+		Layer *lyr = scr->layer[layerDepth - 1];
+		short yRelative = y - lyr->yOffset, xRelative = x - lyr->xOffset;
+		if (lyr->visibility == 0 ||
+				yRelative < 0 || yRelative >= lyr->yLength ||
+				xRelative < 0 || xRelative >= lyr->xLength) {
+			continue;
+		}
+		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
+		if (sprite->iconDepth == 0) continue;
+		mvaddnstr(y, x * 2, sprite->icon[sprite->iconDepth - 1], 2);
+		drawn = 1;
+		break;
+	}
+	if (!drawn) {
+		mvaddnstr(y, x * 2, "  ", 2);
+	}
+}
