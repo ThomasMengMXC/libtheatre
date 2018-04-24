@@ -1,12 +1,11 @@
 #include <curses.h>
-#include <stdlib.h>
 
 #include "screen.h"
 
 Screen *init_screen(short yLength, short xLength) {
 	Screen *scr = malloc(sizeof(Screen));
 	scr->depth = 0; scr->maxDepth = 0;
-	if (yLength == 0) yLength = getmaxy(stdscr) | LINES;
+	if (yLength == 0) yLength = (getmaxy(stdscr) | LINES);
 	if (xLength == 0) xLength = (getmaxx(stdscr) | COLS) / 2;
 	scr->yLength = yLength; scr->xLength = xLength;
 	scr->layer = NULL;
@@ -25,7 +24,7 @@ void free_screen(Screen *scr) {
 }
 
 int draw_screen(Screen *scr) {
-	short iconLayer, y, x, update;
+	uint16_t iconLayer, y, x, update;
 	Vector2D vector;
 	update = 0;
 	while (scr->update->depth > 0) {
@@ -60,23 +59,23 @@ Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 	return scr->layer[scr->depth - 1];
 }
 
-void remove_layer_from_scr(Screen *scr) {
-	if (scr->depth) {
-		free_layer(scr->layer[scr->depth - 1]);
-		scr->layer[scr->depth - 1] = NULL;
-		scr->depth--;
-		while (scr->depth * 2 < scr->maxDepth) {
-			scr->maxDepth = scr->depth * 3 / 2;
-			if (scr->maxDepth == 0) {
-				free(scr->layer);
-				scr->layer = NULL;
-			} else {
-				scr->layer = realloc(scr->layer,
-						sizeof(Layer *) * scr->maxDepth);
-			}
+Layer *remove_layer_from_scr(Screen *scr) {
+	if (!scr->layer || !scr->depth) return NULL;
+	Layer *oldPtr = scr->layer[scr->depth - 1];
+	free_layer(scr->layer[scr->depth - 1]);
+	scr->layer[scr->depth - 1] = NULL;
+	scr->depth--;
+	while (scr->depth * 2 < scr->maxDepth) {
+		scr->maxDepth = scr->depth * 3 / 2;
+		if (scr->maxDepth == 0) {
+			free(scr->layer);
+			scr->layer = NULL;
+		} else {
+			scr->layer = realloc(scr->layer,
+					sizeof(Layer *) * scr->maxDepth);
 		}
 	}
-	return;
+	return oldPtr;
 }
 
 void paint_colour(Screen *scr, short y, short x) {

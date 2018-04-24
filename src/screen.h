@@ -6,8 +6,8 @@
 #include "cursor.h"
 
 typedef struct Screen {
-	unsigned short depth, maxDepth;  // The amount of layers that there are
-	short yLength, xLength; // Size of the screen
+	uint16_t depth, maxDepth;  // The amount of layers that there are
+	uint16_t yLength, xLength; // Size of the screen
 	Layer **layer; // The layers for the screen
 	UpdateStack *update; // The stack for tiles to be drawn
 	Cursor *cursor; // The cursor for interacting with the screen
@@ -20,7 +20,8 @@ int draw_screen(Screen *scr);
 
 Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 		short yLength, short xLength);
-void remove_layer_from_scr(Screen *scr);
+Layer *remove_layer_from_scr(Screen *scr);
+
 void paint_colour(Screen *scr, short y, short x);
 
 #endif

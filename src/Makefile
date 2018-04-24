@@ -1,5 +1,5 @@
 DIRECTORY = $(HOME)
-CFLAGS = -Wall -pedantic -g -std=gnu11 -fPIC -O3
+CFLAGS = -Wall -pedantic -g -std=c11 -fPIC -O3
 LFLAGS = -lncurses
 CC = gcc
 SOURCES = $(wildcard *.c)
@@ -11,6 +11,9 @@ install: all
 	mkdir -p $(DIRECTORY)/include/theatre $(DIRECTORY)/lib
 	cp *.h $(DIRECTORY)/include/theatre
 	cp libtheatre.so $(DIRECTORY)/lib
+
+analyse:
+	clang-tidy -fix *.c -- -std=c11
 
 libtheatre.so: $(OBJECTS)
 	$(CC) -shared *.o $(LFLAGS) -o libtheatre.so

@@ -40,5 +40,4 @@ void free_sprite(Sprite **sprite, short yLength, short xLength) {
 		free(sprite[y]);
 	}
 	free(sprite);
-	return;
 }

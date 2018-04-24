@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include "props.h"
 
 Props *init_props(void) {
@@ -19,11 +18,8 @@ void mv_cursor_relative(Props *props, short y, short x) {
 			|| cursor->yPos + y < 0) return;
 	if (cursor->xPos + x >= props->screen->xLength
 			|| cursor->xPos + x < 0) return;
-	//activate_hover(props, 0, cursor->yPos, cursor->xPos);
 	cursor->yPos += y;
 	cursor->xPos += x;
-	//activate_hover(props, 1, cursor->yPos, cursor->xPos);
-	return;
 }
 
 void mv_cursor_absolute(Props *props, short y, short x) {
@@ -32,11 +28,8 @@ void mv_cursor_absolute(Props *props, short y, short x) {
 			|| cursor->yPos + y < 0) return;
 	if (cursor->xPos + x >= props->screen->xLength
 			|| cursor->xPos + x < 0) return;
-	activate_hover(props, 0, cursor->yPos, cursor->xPos);
 	cursor->yPos = y;
 	cursor->xPos = x;
-	activate_hover(props, 1, cursor->yPos, cursor->xPos);
-	return;
 }
 
 // Returns 1 if nothing is activated, 0 otherwise
@@ -62,12 +55,12 @@ int activate_button(Props *props, short y, short x) {
 
 // Returns 1 if nothing is activated, 0 otherwise
 int activate_hover(Props *props, char start,  short y, short x) {
-	short hoverLayer = props->screen->depth;
+	uint16_t hoverLayer = props->screen->depth;
 	while (hoverLayer) {
 		Layer *lyr = props->screen->layer[hoverLayer - 1];
 		hoverLayer--;
-		short yRelative = y - lyr->yOffset;
-		short xRelative = x - lyr->xOffset;
+		uint16_t yRelative = y - lyr->yOffset;
+		uint16_t xRelative = x - lyr->xOffset;
 		if (lyr->visibility == 0 ||
 				yRelative < 0 || yRelative >= lyr->yLength ||
 				xRelative < 0 || xRelative >= lyr->xLength) {

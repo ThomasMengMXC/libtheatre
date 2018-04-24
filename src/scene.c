@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include "scene.h"
 
 Scene *init_scene(UpdateFn upd, KeyboardFn kb,

@@ -5,7 +5,7 @@
 
 typedef struct Stage{
 	void *backstage;
-	unsigned short depth, maxDepth;
+	uint32_t depth, maxDepth;
 	Scene **scene;
 	Scene *currentScene;
 } Stage;

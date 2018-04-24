@@ -30,7 +30,6 @@ void free_vector2D_grid(char **grid, uint16_t y, uint16_t x) {
 		free(grid[i]);
 	}
 	free(grid);
-	return;
 }
 	
 
@@ -42,12 +41,11 @@ void vector2D_push(UpdateStack *update, Vector2D vector) {
 		if (update->depth > update->maxDepth) {
 			update->maxDepth = update->depth * 10;
 			update->vector2D = realloc(update->vector2D,
-					sizeof(Vector2D *) * update->maxDepth);
+					sizeof(Vector2D) * update->maxDepth);
 		}
 		update->vector2D[update->depth - 1] = vector;
 		update->grid[vector.y][vector.x] = 1;
 	}
-	return;
 }
 
 Vector2D vector2D_pop(UpdateStack *update) {
@@ -63,7 +61,7 @@ Vector2D vector2D_pop(UpdateStack *update) {
 				update->vector2D = NULL;
 			} else {
 				update->vector2D = realloc(update->vector2D,
-						sizeof(Vector2D *) * update->maxDepth);
+						sizeof(Vector2D) * update->maxDepth);
 			}
 		}
 		update->grid[returnValue.y][returnValue.x] = 0;
