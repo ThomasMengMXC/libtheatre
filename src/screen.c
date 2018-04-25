@@ -47,12 +47,18 @@ void clear_screen(Screen *scr) {
 }
 
 void resize_screen(Screen *scr) {
+	Layer *layer = NULL;
+	Cursor *cursor = scr->cursor;
 	free_update_stack(scr->update, scr->yLength, scr->xLength);
-	scr->yLength = (getmaxy(stdscr) | LINES);
-	scr->xLength = (getmaxx(stdscr) | COLS) / 2;
+	if ((scr->yLength = (getmaxy(stdscr) | LINES)) == 0) scr->yLength = 1;
+	if ((scr->xLength = (getmaxx(stdscr) | COLS) / 2) == 0) scr->xLength = 1;
+	if (cursor->yPos > scr->yLength) cursor->yPos = scr->yLength - 1;
+	if (cursor->xPos > scr->xLength) cursor->xPos = scr->xLength - 1;
 	scr->update = init_update_stack(scr->yLength, scr->xLength);
 	for (uint16_t layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
-		scr->layer[layerDepth-1]->update = scr->update;
+		layer = scr->layer[layerDepth - 1];
+		layer->update = scr->update;
+		if (layer->fillSize) resize_layer(layer, scr->yLength, scr->xLength);
 		refresh_layer(scr->layer[layerDepth - 1]);
 	}
 }
@@ -60,15 +66,17 @@ void resize_screen(Screen *scr) {
 // creates a new layer on the screen and returns a pointer to said new layer
 Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 		short yLength, short xLength) {
+	char fillSize = 0;
 	scr->depth++;
 	if (scr->depth >= scr->maxDepth) {
 		scr->maxDepth = scr->depth * 2;
 		scr->layer = realloc(scr->layer, sizeof(Layer *) * scr->maxDepth);
 	}
 
-	if (yLength == 0) yLength = scr->yLength;
-	if (xLength == 0) xLength = scr->xLength;
-	scr->layer[scr->depth - 1] = init_layer(yOffset, xOffset, yLength, xLength);
+	if (yLength == 0) {yLength = scr->yLength; fillSize = 1;}
+	if (xLength == 0) {xLength = scr->xLength; fillSize = 1;}
+	scr->layer[scr->depth - 1] = init_layer(fillSize, yOffset, xOffset,
+			yLength, xLength);
 	scr->layer[scr->depth - 1]->update = scr->update;
 	return scr->layer[scr->depth - 1];
 }

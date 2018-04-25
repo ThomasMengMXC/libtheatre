@@ -9,16 +9,27 @@ static int remove_x_from_y(uint16_t *depth, uint16_t *maxDepth,
 		void **object, size_t size);
 
 
-Layer *init_layer(short yOffset, short xOffset,
+Layer *init_layer(char fillSize, short yOffset, short xOffset,
 		uint16_t yLength, uint16_t xLength) {
 	Layer *layer = malloc(sizeof(Layer));
 	layer->visibility = 1;
+	layer->fillSize = fillSize;
 	layer->yOffset = yOffset; layer->xOffset = xOffset;
 	layer->yLength = yLength; layer->xLength = xLength;
 	layer->sprite = init_sprite(yLength, xLength);
 	layer->update = NULL;
 	return layer;
 }
+
+void resize_layer(Layer *layer, uint16_t yLength, uint16_t xLength) {
+	if (!layer) return;
+	refresh_layer(layer);
+	free_sprite(layer->sprite, layer->yLength, layer->xLength);
+	layer->yLength = yLength;
+	layer->xLength = xLength;
+	layer->sprite = init_sprite(yLength, xLength);
+}
+	
 
 void clear_layer(Layer *layer) {
 	if (!layer) return;
