@@ -1,10 +1,12 @@
 #ifndef CURSOR_H
 #define CURSOR_H
 
+#include <stdint.h>
+
 typedef struct Cursor {
 	char canClick;
-	unsigned char yPos, xPos;
-	unsigned char yOld, xOld;
+	uint16_t yPos, xPos;
+	uint16_t yOld, xOld;
 	char *icon;
 } Cursor;
 
