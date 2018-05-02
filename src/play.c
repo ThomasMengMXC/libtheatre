@@ -49,6 +49,7 @@ int enact_play(Stage *stage) {
 		while ((ch = getch()) != ERR) {
 			if ((keyboardSignal = scene->keyboard(scene->props, ch)) >= 0) {
 				scene_change(stage, keyboardSignal);
+				scene = stage->currentScene;
 			}
 		}
 		if (keyboardSignal == -2) break;
