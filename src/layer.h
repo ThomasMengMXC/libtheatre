@@ -24,7 +24,7 @@ void mv_layer_absolute(Layer *layer, short y, short x);
 void refresh_layer(Layer *layer);
 
 
-// ADDING/REMOVING TO/FROM LAYERS ----------------------------------------
+/* ADDING/REMOVING TO/FROM LAYERS ---------------------------------------- */
 
 void add_colour_to_layer(Layer *layer, short y, short x, Colour colour);
 void remove_colour_from_layer(Layer *layer, short y, short x);

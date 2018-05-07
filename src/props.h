@@ -1,7 +1,7 @@
 #ifndef PROPS_H
 #define PROPS_H
 
-#include <curses.h> // needed for the keyboard inputs
+#include <curses.h> /* needed for the keyboard inputs */
 #include "screen.h"
 
 typedef struct Props {

@@ -18,15 +18,17 @@ void free_update_stack(UpdateStack *update, uint16_t y, uint16_t x) {
 }
 
 char **init_vector2D_grid(uint16_t y, uint16_t x) {
+	int i;
 	char **grid = calloc(y, sizeof(char *));
-	for (int i = 0; i < y; i++) {
+	for (i = 0; i < y; i++) {
 		grid[i] = calloc(x, sizeof(char));
 	}
 	return grid;
 }
 
 void free_vector2D_grid(char **grid, uint16_t y, uint16_t x) {
-	for (int i = 0; i < y; i++) {
+	int i;
+	for (i = 0; i < y; i++) {
 		free(grid[i]);
 	}
 	free(grid);
@@ -49,10 +51,15 @@ void vector2D_push(UpdateStack *update, Vector2D vector) {
 }
 
 Vector2D vector2D_pop(UpdateStack *update) {
-	Vector2D returnValue = {.y = -1, .x = -1};
+	Vector2D returnValue, pos;
+	returnValue.y = -1;
+	returnValue.x = -1;
 	if (update->depth) {
 		returnValue = update->vector2D[update->depth - 1];
-		update->vector2D[update->depth - 1] = (Vector2D) {.y = -1, .x = -1};
+
+		pos.y = -1; pos.x = -1;
+		update->vector2D[update->depth - 1] = pos;
+
 		update->depth--;
 		if (update->depth * 20 < update->maxDepth) {
 			update->maxDepth = update->depth * 10;

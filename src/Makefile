@@ -1,6 +1,6 @@
 DIRECTORY = $(HOME)
-CFLAGS = -Wall -pedantic -g -std=c99 -fPIC -O3
-LFLAGS = -lncurses
+CFLAGS = -Wall -pedantic -std=c89 -fPIC -O3
+LFLAGS = -lncursesw
 CC = gcc
 SOURCES = $(wildcard *.c)
 OBJECTS = $(SOURCES:.c=.o)

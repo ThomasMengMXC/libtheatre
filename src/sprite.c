@@ -2,10 +2,11 @@
 #include "sprite.h"
 
 Sprite **init_sprite(short yLength, short xLength) {
-	Sprite **spriteArray = malloc(sizeof(Sprite *) * yLength); // the sprite
-	for (int y = 0; y < yLength; y++) {
+	int y, x;
+	Sprite **spriteArray = malloc(sizeof(Sprite *) * yLength);
+	for (y = 0; y < yLength; y++) {
 		spriteArray[y] = malloc(sizeof(Sprite) * xLength);
-		for (int x = 0; x < xLength; x++) {
+		for (x = 0; x < xLength; x++) {
 			Sprite *sprite = &(spriteArray[y][x]);
 			sprite->colour = NULL;
 			sprite->icon = NULL;
@@ -22,8 +23,9 @@ Sprite **init_sprite(short yLength, short xLength) {
 }
 
 void free_sprite(Sprite **sprite, short yLength, short xLength) {
-	for (int y = 0; y < yLength; y++) {
-		for (int x = 0; x < xLength; x++) {
+	int y, x;
+	for (y = 0; y < yLength; y++) {
+		for (x = 0; x < xLength; x++) {
 			if (sprite[y][x].icon != NULL) {
 				free(sprite[y][x].icon);
 			}

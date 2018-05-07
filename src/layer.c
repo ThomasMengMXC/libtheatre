@@ -62,79 +62,110 @@ void free_layer(Layer *layer) {
 }
 
 void refresh_layer(Layer *layer) {
+	int y, x;
 	if (!layer) return;
-	for (int y = 0; y < layer->yLength; y++) {
-		for (int x = 0; x < layer->xLength; x++) {
-			Vector2D pos = {
-				.y = y + layer->yOffset,
-				.x = x + layer->xOffset
-			};
+	for (y = 0; y < layer->yLength; y++) {
+		for (x = 0; x < layer->xLength; x++) {
+			Vector2D pos;
+			pos.y = y + layer->yOffset;
+			pos.x = x + layer->xOffset;
 			vector2D_push(layer->update, pos);
 		}
 	}
 }
 
-// ADDING/REMOVING TO/FROM LAYERS ----------------------------------------
+/* ADDING/REMOVING TO/FROM LAYERS ---------------------------------------*/
 
 void add_colour_to_layer(Layer *layer, short y, short x, Colour colour) {
+	Sprite *sprite;
+	Vector2D pos;
 	if (!layer) return;
 	if (	y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength) {
 		return;
 	}
-	Sprite *sprite = &(layer->sprite[y][x]);
+	sprite = &(layer->sprite[y][x]);
 	if (add_x_to_y(&(sprite->colourDepth), &(sprite->colourMaxDepth),
 			(void **) &(sprite->colour), sizeof(Colour))) {
 		return;
 	}
-	Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+	pos.y = y + layer->yOffset;
+	pos.x = x + layer->xOffset;
 	vector2D_push(layer->update, pos);
 	sprite->colour[sprite->colourDepth - 1] = colour;
 }
 
 void remove_colour_from_layer(Layer *layer, short y, short x) {
+	Sprite *sprite;
+	Vector2D pos;
 	if (!layer) return;
 	if (	y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength) return;
-	Sprite *sprite = &(layer->sprite[y][x]);
+	sprite = &(layer->sprite[y][x]);
 	if (remove_x_from_y(&(sprite->colourDepth), &(sprite->colourMaxDepth),
 			(void **) &(sprite->colour), sizeof(Colour))) {
-		Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+		pos.y = y + layer->yOffset;
+		pos.x = x + layer->xOffset;
 		vector2D_push(layer->update, pos);
 	}
 }
 
 void add_icon_to_layer(Layer *layer, short y, short x, char *icon, size_t n) {
-	if (!layer) return;
-	int cells = (n % 2 ? n + 1 : n) >> 1;
-	if (y < 0 || y >= layer->yLength || x < 0 || x >= layer->xLength) return;
-	for (int i = 0; i < cells; i++, x++) {
+	int i, cells;
+	Vector2D pos;
+	Sprite *sprite;
+	if (!layer || 
+			y < 0 || y >= layer->yLength || 
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+
+	cells = (n % 2 ? n + 1 : n) >> 1; /* calculate the cel of n/2 */
+	for (i = 0; i < cells; i++, x++) {
+		/* return if x pos is beyond the size of the layer */
 		if (x >= layer->xLength) return;
-		Sprite *sprite = &(layer->sprite[y][x]);
+		sprite = &(layer->sprite[y][x]);
+
+		/* Add a new char[3] block of memory to the sprite */
 		add_x_to_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
 				(void **) &(sprite->icon), sizeof(char[3]));
-		Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+
+		/* push the position onto the update struct */
+		pos.y = y + layer->yOffset;
+		pos.x = x + layer->xOffset;
 		vector2D_push(layer->update, pos);
+
 		if (i + 1 == cells && n % 2) {
+			/* copy an empty character if the length of the string is 1 */
 			strncpy(sprite->icon[sprite->iconDepth - 1], icon + i * 2, 1);
 			sprite->icon[sprite->iconDepth - 1][1] = ' ';
 		} else {
+			/* copy as normal */
 			strncpy(sprite->icon[sprite->iconDepth - 1], icon + i * 2, 2);
 		}
+
+		/* null terminator */
 		sprite->icon[sprite->iconDepth - 1][2] = 0;
 	}
 }
 
 void remove_icon_from_layer(Layer *layer, short y, short x, size_t n) {
-	if (!layer) return;
-	n = n % 2 ? (n + 1) >> 1 : n >> 1; // ceil of n/2
-	for (int i = 0; i < n; i++) {
-		if (	y < 0 || y >= layer->yLength ||
-				x < 0 || x >= layer->xLength) return;
-		Sprite *sprite = &(layer->sprite[y][x]);
+	int i;
+	Sprite *sprite;
+	Vector2D pos;
+	if (!layer ||
+			y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+	n = n % 2 ? (n + 1) >> 1 : n >> 1; /* ceil of n/2 */
+	for (i = 0; i < n; i++) {
+		if (x >= layer->xLength) return;
+		sprite = &(layer->sprite[y][x]);
 		if (remove_x_from_y(&(sprite->iconDepth), &(sprite->iconMaxDepth),
 				(void **) &(sprite->icon), sizeof(char[3]))) {
-			Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+			pos.y = y + layer->yOffset;
+			pos.x = x + layer->xOffset;
 			vector2D_push(layer->update, pos);
 		}
 		x += 1;
@@ -142,43 +173,51 @@ void remove_icon_from_layer(Layer *layer, short y, short x, size_t n) {
 }
 
 void add_button_to_layer(Layer *layer, short y, short x, Button button) {
-	if (!layer) return;
-	if (	y < 0 || y >= layer->yLength ||
+	Sprite *sprite;
+	if (!layer ||
+			y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength) {
 		return;
 	}
-	Sprite *sprite = &(layer->sprite[y][x]);
+	sprite = &(layer->sprite[y][x]);
 	add_x_to_y(&(sprite->buttonDepth), &(sprite->buttonMaxDepth),
 			(void **) &(sprite->button), sizeof(Button));
 	sprite->button[sprite->buttonDepth - 1] = button;
 }
 
 void remove_button_from_layer(Layer *layer, short y, short x) {
-	if (!layer) return;
-	if (	y < 0 || y >= layer->yLength ||
-			x < 0 || x >= layer->xLength) return;
-	Sprite *sprite = &(layer->sprite[y][x]);
+	Sprite *sprite;
+	if (!layer ||
+			y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+	sprite = &(layer->sprite[y][x]);
 	remove_x_from_y(&(sprite->buttonDepth), &(sprite->buttonMaxDepth),
 			(void **) &(sprite->button), sizeof(Button));
 }
 
 void add_hover_to_layer(Layer *layer, short y, short x, Hover hover) {
-	if (!layer) return;
-	if (	y < 0 || y >= layer->yLength ||
+	Sprite *sprite;
+	if (!layer ||
+			y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength) {
 		return;
 	}
-	Sprite *sprite = &(layer->sprite[y][x]);
+	sprite = &(layer->sprite[y][x]);
 	add_x_to_y(&(sprite->hoverDepth), &(sprite->hoverMaxDepth),
 			(void **) &(sprite->hover), sizeof(Hover));
 	sprite->hover[sprite->hoverDepth - 1] = hover;
 }
 
 void remove_hover_from_layer(Layer *layer, short y, short x) {
-	if (!layer) return;
-	if (	y < 0 || y >= layer->yLength ||
-			x < 0 || x >= layer->xLength) return;
-	Sprite *sprite = &(layer->sprite[y][x]);
+	Sprite *sprite;
+	if (!layer ||
+			y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+	sprite = &(layer->sprite[y][x]);
 	remove_x_from_y(&(sprite->hoverDepth), &(sprite->hoverMaxDepth),
 			(void **) &(sprite->hover), sizeof(Hover));
 }
@@ -198,7 +237,7 @@ void layer_memory_swap(Layer *layer1, Layer *layer2) {
 	free(swapLayer);
 }
 
-// STATIC -------------------------------------------------------------------
+/* STATIC -----------------------------------------------------------------*/
 
 static int add_x_to_y(uint16_t *depth, uint16_t *maxDepth,
 		void **object, size_t size) {

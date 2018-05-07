@@ -6,7 +6,7 @@
 static void segfault(int signo);
 static int init_ncurses(void);
 
-// left as an exercise for the reader :^)
+/* left as an exercise for the reader :^) */
 void init_theatre(void) {
 	signal(SIGSEGV, segfault);
 	init_ncurses();
@@ -19,18 +19,19 @@ static void segfault(int signo) {
 	exit(1);
 }
 
-// set up some ncurses specific stuff
+/* set up some ncurses specific stuff */
 static int init_ncurses(void) {
+	int i;
 	initscr();
 
 	start_color();
-	for (int i = 0; i < 233; i++) {
+	for (i = 0; i < 233; i++) {
 		init_pair(i + 1, COLOR_BLACK, i);
 	}
 	cbreak();
 	noecho();
 	curs_set(0);
-	timeout(0); // 60fps baby
+	timeout(0);
 	keypad(stdscr, TRUE);
 	return 0;
 }
@@ -45,7 +46,7 @@ int enact_play(Stage *stage) {
 		t0 = clock();
 		scene = stage->currentScene;
 		scene->update(scene->props);
-		// change scenes base on the return value
+		/* change scenes base on the return value */
 		while ((ch = getch()) != ERR) {
 			if ((keyboardSignal = scene->keyboard(scene->props, ch)) >= 0) {
 				scene_change(stage, keyboardSignal);
