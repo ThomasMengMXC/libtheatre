@@ -26,7 +26,7 @@ void scene_change(Stage *stage, short newSc) {
 	}
 }
 
-/* creates a new scene on the stage and returns a pointer to said new layer */
+// creates a new scene on the stage and returns a pointer to said new layer
 void add_scene_to_stage(Stage *stage, UpdateFn upd, KeyboardFn kb,
 		ArrivalFn arrival, DepartureFn departure) {
 	stage->depth++;
@@ -52,7 +52,7 @@ void remove_scene_from_stage(Stage *stage) {
 			if (stage->maxDepth == 0) {
 				free(stage->scene);
 				stage->scene = NULL;
-				stage->depth = 0; /* so the analyser will stop bugging me */
+				stage->depth = 0; // so the analyser will stop bugging me
 			} else {
 				stage->scene = realloc(stage->scene,
 						sizeof(Scene *) * stage->maxDepth);

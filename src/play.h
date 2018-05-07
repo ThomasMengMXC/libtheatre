@@ -1,6 +1,6 @@
 #ifndef PLAY_H
 #define PLAY_H
-/* This is referring to the theatre play, NOT play game */
+// This is referring to the theatre play, NOT play game
 
 #include "stage.h"
 

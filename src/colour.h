@@ -1,6 +1,6 @@
 #ifndef COLOUR_H
 #define COLOUR_H
-/* AUSSIE AUSSIE AUSSIE */
+// AUSSIE AUSSIE AUSSIE
 
 #include <stdint.h>
 

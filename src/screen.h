@@ -6,11 +6,11 @@
 #include "cursor.h"
 
 typedef struct Screen {
-	uint16_t depth, maxDepth;  /* The amount of layers that there are */
-	uint16_t yLength, xLength; /* Size of the screen */
-	Layer **layer; /* The layers for the screen */
-	UpdateStack *update; /* The stack for tiles to be drawn */
-	Cursor *cursor; /* The cursor for interacting with the screen */
+	uint16_t depth, maxDepth;  // The amount of layers that there are
+	uint16_t yLength, xLength; // Size of the screen
+	Layer **layer; // The layers for the screen
+	UpdateStack *update; // The stack for tiles to be drawn
+	Cursor *cursor; // The cursor for interacting with the screen
 } Screen;
 
 Screen *init_screen(short yLength, short xLength);

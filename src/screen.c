@@ -41,15 +41,13 @@ int draw_screen(Screen *scr) {
 }
 
 void clear_screen(Screen *scr) {
-	uint16_t layerDepth;
-	for (layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
+	for (uint16_t layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
 		clear_layer(scr->layer[layerDepth - 1]);
 	}
 }
 
 void resize_screen(Screen *scr) {
 	Layer *layer = NULL;
-	uint16_t layerDepth;
 	Cursor *cursor = scr->cursor;
 	free_update_stack(scr->update, scr->yLength, scr->xLength);
 	if ((scr->yLength = (getmaxy(stdscr) | LINES)) == 0) scr->yLength = 1;
@@ -57,7 +55,7 @@ void resize_screen(Screen *scr) {
 	if (cursor->yPos > scr->yLength) cursor->yPos = scr->yLength - 1;
 	if (cursor->xPos > scr->xLength) cursor->xPos = scr->xLength - 1;
 	scr->update = init_update_stack(scr->yLength, scr->xLength);
-	for (layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
+	for (uint16_t layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
 		layer = scr->layer[layerDepth - 1];
 		layer->update = scr->update;
 		if (layer->fillSize) resize_layer(layer, scr->yLength, scr->xLength);
@@ -65,7 +63,7 @@ void resize_screen(Screen *scr) {
 	}
 }
 
-/* creates a new layer on the screen and returns a pointer to the new layer */
+// creates a new layer on the screen and returns a pointer to said new layer
 Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 		short yLength, short xLength) {
 	char fillSize = 0;
@@ -84,9 +82,8 @@ Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 }
 
 Layer *remove_layer_from_scr(Screen *scr) {
-	Layer *oldPtr;
 	if (!scr->layer || !scr->depth) return NULL;
-	oldPtr = scr->layer[scr->depth - 1];
+	Layer *oldPtr = scr->layer[scr->depth - 1];
 	free_layer(scr->layer[scr->depth - 1]);
 	scr->layer[scr->depth - 1] = NULL;
 	scr->depth--;
@@ -105,24 +102,21 @@ Layer *remove_layer_from_scr(Screen *scr) {
 
 void paint_colour(Screen *scr, short y, short x) {
 	short layerDepth = scr->depth;
-	Colour col, *colour;
-	short yRelative, xRelative;
-	Sprite *sprite;
 	float r0 = 0, r1 = 1;
 	float g0 = 0, g1 = 1;
 	float b0 = 0, b1 = 1;
+	Colour col, *colour;
 	uint8_t colourDepth = 0;
 	while (layerDepth && r1 + g1 + b1 > 0.0001) {
 		Layer *lyr = scr->layer[layerDepth - 1];
 		layerDepth--;
-		yRelative = y - lyr->yOffset;
-		xRelative = x - lyr->xOffset;
+		short yRelative = y - lyr->yOffset, xRelative = x - lyr->xOffset;
 		if (lyr->visibility == 0 ||
 				yRelative < 0 || yRelative >= lyr->yLength ||
 				xRelative < 0 || xRelative >= lyr->xLength) {
 			continue;
 		}
-		sprite = lyr->sprite[yRelative] + xRelative;
+		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
 		colourDepth = sprite->colourDepth;
 		colour = sprite->colour;
 		while (colourDepth && r1 + g1 + b1 > 0.0001) {
@@ -137,19 +131,16 @@ void paint_colour(Screen *scr, short y, short x) {
 }
 
 void draw_icon(Screen *scr, short y, short x) {
-	short layerDepth, yRelative, xRelative;
-	Sprite *sprite;
 	char drawn = 0;
-	for (layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
+	for (short layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
 		Layer *lyr = scr->layer[layerDepth - 1];
-		yRelative = y - lyr->yOffset;
-		xRelative = x - lyr->xOffset;
+		short yRelative = y - lyr->yOffset, xRelative = x - lyr->xOffset;
 		if (lyr->visibility == 0 ||
 				yRelative < 0 || yRelative >= lyr->yLength ||
 				xRelative < 0 || xRelative >= lyr->xLength) {
 			continue;
 		}
-		sprite = lyr->sprite[yRelative] + xRelative;
+		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
 		if (sprite->iconDepth == 0) continue;
 		mvaddnstr(y, x * 2, sprite->icon[sprite->iconDepth - 1], 2);
 		drawn = 1;
