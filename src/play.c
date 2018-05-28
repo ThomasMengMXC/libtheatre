@@ -40,7 +40,7 @@ int enact_play(Stage *stage) {
 	int ch, keyboardSignal = -1;
 	time_t t0, t1;
 	if (!stage->currentScene) return 0;
-	stage->currentScene->arrival(stage->currentScene->props);
+	stage->currentScene->arrival(stage->currentScene->props, 0);
 	while(1) {
 		t0 = clock();
 		scene = stage->currentScene;

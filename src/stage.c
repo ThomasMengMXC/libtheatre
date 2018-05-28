@@ -22,7 +22,7 @@ void scene_change(Stage *stage, short newSc) {
 	if (stage && stage->depth > newSc && newSc > 0) {
 		stage->currentScene->departure(stage->currentScene->props);
 		stage->currentScene = stage->scene[newSc];
-		stage->currentScene->arrival(stage->currentScene->props);
+		stage->currentScene->arrival(stage->currentScene->props, newSc);
 	}
 }
 

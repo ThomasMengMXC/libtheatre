@@ -12,7 +12,7 @@ typedef struct Props {
 
 typedef void (*UpdateFn)(Props *props);
 typedef	int (*KeyboardFn)(Props *props, int ch);
-typedef	void (*ArrivalFn)(Props *props);
+typedef	void (*ArrivalFn)(Props *props, int sceneNumber);
 typedef	void (*DepartureFn)(Props *props);
 
 Props *init_props(void);

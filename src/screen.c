@@ -2,6 +2,9 @@
 
 #include "screen.h"
 
+static void paint_colour(Screen *scr, short y, short x);
+static void draw_icon(Screen *scr, short y, short x);
+
 Screen *init_screen(short yLength, short xLength) {
 	Screen *scr = malloc(sizeof(Screen));
 	scr->depth = 0; scr->maxDepth = 0;
@@ -100,7 +103,47 @@ Layer *remove_layer_from_scr(Screen *scr) {
 	return oldPtr;
 }
 
-void paint_colour(Screen *scr, short y, short x) {
+// Returns 1 if nothing is activated, 0 otherwise
+Button get_button(Screen *scr, short y, short x) {
+	short buttonLayer = scr->depth;
+	while (buttonLayer) {
+		Layer *lyr = scr->layer[buttonLayer - 1];
+		buttonLayer--;
+		short yRelative = y - lyr->yOffset;
+		short xRelative = x - lyr->xOffset;
+		if (lyr->visibility == 0 ||
+				yRelative < 0 || yRelative >= lyr->yLength ||
+				xRelative < 0 || xRelative >= lyr->xLength) {
+			continue;
+		}
+		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
+		if (sprite->buttonDepth == 0) continue;
+		return sprite->button[sprite->colourDepth - 1];
+	}
+	return NULL;
+}
+
+// Returns 1 if nothing is activated, 0 otherwise
+Hover get_hover(Screen *scr, short y, short x) {
+	uint16_t hoverLayer = scr->depth;
+	while (hoverLayer) {
+		Layer *lyr = scr->layer[hoverLayer - 1];
+		hoverLayer--;
+		uint16_t yRelative = y - lyr->yOffset;
+		uint16_t xRelative = x - lyr->xOffset;
+		if (lyr->visibility == 0 ||
+				yRelative < 0 || yRelative >= lyr->yLength ||
+				xRelative < 0 || xRelative >= lyr->xLength) {
+			continue;
+		}
+		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
+		if (sprite->hoverDepth == 0) continue;
+		return sprite->hover[sprite->colourDepth - 1];
+	}
+	return NULL;
+}
+
+static void paint_colour(Screen *scr, short y, short x) {
 	short layerDepth = scr->depth;
 	float r0 = 0, r1 = 1;
 	float g0 = 0, g1 = 1;
@@ -130,7 +173,7 @@ void paint_colour(Screen *scr, short y, short x) {
 	attron(COLOR_PAIR(rgb_to_term256(r0, g0, b0) + 1));
 }
 
-void draw_icon(Screen *scr, short y, short x) {
+static void draw_icon(Screen *scr, short y, short x) {
 	char drawn = 0;
 	for (short layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
 		Layer *lyr = scr->layer[layerDepth - 1];

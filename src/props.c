@@ -32,44 +32,16 @@ void mv_cursor_absolute(Props *props, short y, short x) {
 	cursor->xPos = x;
 }
 
-// Returns 1 if nothing is activated, 0 otherwise
 int activate_button(Props *props, short y, short x) {
-	short buttonLayer = props->screen->depth;
-	while (buttonLayer) {
-		Layer *lyr = props->screen->layer[buttonLayer - 1];
-		buttonLayer--;
-		short yRelative = y - lyr->yOffset;
-		short xRelative = x - lyr->xOffset;
-		if (lyr->visibility == 0 ||
-				yRelative < 0 || yRelative >= lyr->yLength ||
-				xRelative < 0 || xRelative >= lyr->xLength) {
-			continue;
-		}
-		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
-		if (sprite->buttonDepth == 0) continue;
-		sprite->button[sprite->colourDepth - 1](props, lyr, y, x);
-		break;
-	}
+	Button button = get_button(props->screen, y, x);
+	if (button == NULL) return 0;
+	button(props, y, x);
 	return 0;
 }
 
-// Returns 1 if nothing is activated, 0 otherwise
-int activate_hover(Props *props, char start,  short y, short x) {
-	uint16_t hoverLayer = props->screen->depth;
-	while (hoverLayer) {
-		Layer *lyr = props->screen->layer[hoverLayer - 1];
-		hoverLayer--;
-		uint16_t yRelative = y - lyr->yOffset;
-		uint16_t xRelative = x - lyr->xOffset;
-		if (lyr->visibility == 0 ||
-				yRelative < 0 || yRelative >= lyr->yLength ||
-				xRelative < 0 || xRelative >= lyr->xLength) {
-			continue;
-		}
-		Sprite *sprite = lyr->sprite[yRelative] + xRelative;
-		if (sprite->hoverDepth == 0) continue;
-		sprite->hover[sprite->colourDepth - 1](props, lyr, start, y, x);
-		break;
-	}
+int activate_hover(Props *props, char start, short y, short x) {
+	Hover hover = get_hover(props->screen, y, x);
+	if (hover == NULL) return 0;
+	hover(props, start, y, x);
 	return 0;
 }

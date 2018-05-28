@@ -4,8 +4,8 @@
 #include "colour.h"
 
 struct Props; struct Layer; // prototypes for the following two prototypes :^)
-typedef int (*Button)(struct Props *, struct Layer *, short y, short x);
-typedef int (*Hover)(struct Props *, struct Layer *, char start, short y, short x);
+typedef int (*Button)(struct Props *, short y, short x);
+typedef int (*Hover)(struct Props *, char start, short y, short x);
 
 typedef struct Sprite {
 	uint16_t colourDepth, iconDepth, buttonDepth, hoverDepth;

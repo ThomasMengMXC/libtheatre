@@ -25,7 +25,7 @@ Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 		short yLength, short xLength);
 Layer *remove_layer_from_scr(Screen *scr);
 
-void paint_colour(Screen *scr, short y, short x);
-void draw_icon(Screen *scr, short y, short x);
+Button get_button(Screen *scr, short y, short x);
+Hover get_hover(Screen *scr, short y, short x);
 
 #endif
