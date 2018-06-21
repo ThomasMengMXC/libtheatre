@@ -9,16 +9,16 @@ typedef struct Layer {
 	char visibility;
 	char fillSize;
 	short yOffset, xOffset;
-	uint16_t yLength, xLength;
+	unsigned yLength, xLength;
 	Sprite **sprite;
 	UpdateStack *update;
 } Layer;
 
 Layer *init_layer(char fillSize, short yOffset, short xOffset,
-		uint16_t yLength, uint16_t xLength);
+		unsigned yLength, unsigned xLength);
 void free_layer(Layer *layer);
 void clear_layer(Layer *layer);
-void resize_layer(Layer *layer, uint16_t yLength, uint16_t xLength);
+void resize_layer(Layer *layer, unsigned yLength, unsigned xLength);
 void mv_layer_relative(Layer *layer, short y, short x);
 void mv_layer_absolute(Layer *layer, short y, short x);
 void refresh_layer(Layer *layer);

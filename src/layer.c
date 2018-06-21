@@ -3,14 +3,14 @@
 
 #include "layer.h"
 
-static int add_x_to_y(uint16_t *depth, uint16_t *maxDepth,
+static int add_x_to_y(unsigned *depth, unsigned *maxDepth,
 		void **object, size_t size);
-static int remove_x_from_y(uint16_t *depth, uint16_t *maxDepth,
+static int remove_x_from_y(unsigned *depth, unsigned *maxDepth,
 		void **object, size_t size);
 
 
 Layer *init_layer(char fillSize, short yOffset, short xOffset,
-		uint16_t yLength, uint16_t xLength) {
+		unsigned yLength, unsigned xLength) {
 	Layer *layer = malloc(sizeof(Layer));
 	layer->visibility = 1;
 	layer->fillSize = fillSize;
@@ -21,7 +21,7 @@ Layer *init_layer(char fillSize, short yOffset, short xOffset,
 	return layer;
 }
 
-void resize_layer(Layer *layer, uint16_t yLength, uint16_t xLength) {
+void resize_layer(Layer *layer, unsigned yLength, unsigned xLength) {
 	if (!layer) return;
 	refresh_layer(layer);
 	free_sprite(layer->sprite, layer->yLength, layer->xLength);
@@ -200,7 +200,7 @@ void layer_memory_swap(Layer *layer1, Layer *layer2) {
 
 // STATIC -------------------------------------------------------------------
 
-static int add_x_to_y(uint16_t *depth, uint16_t *maxDepth,
+static int add_x_to_y(unsigned *depth, unsigned *maxDepth,
 		void **object, size_t size) {
 	if (*depth >= (UINT16_MAX >> 1) - 1) return 1;
 	(*depth)++;
@@ -211,7 +211,7 @@ static int add_x_to_y(uint16_t *depth, uint16_t *maxDepth,
 	return 0;
 }
 
-static int remove_x_from_y(uint16_t *depth, uint16_t *maxDepth,
+static int remove_x_from_y(unsigned *depth, unsigned *maxDepth,
 		void **object, size_t size) {
 	if (*depth) {
 		(*depth)--;

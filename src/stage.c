@@ -1,9 +1,9 @@
 #include <limits.h>
 #include "stage.h"
 
-Stage *init_stage(void) {
+Stage *init_stage(void *backstage) {
 	Stage *stage = malloc(sizeof(Stage));
-	stage->backstage = NULL;
+	stage->backstage = backstage;
 	stage->depth = 0; stage->maxDepth = 0;
 	stage->scene = NULL;
 	stage->currentScene = NULL;

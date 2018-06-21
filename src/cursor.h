@@ -5,8 +5,8 @@
 
 typedef struct Cursor {
 	char canClick;
-	uint16_t yPos, xPos;
-	uint16_t yOld, xOld;
+	unsigned yPos, xPos;
+	unsigned yOld, xOld;
 	char *icon;
 } Cursor;
 

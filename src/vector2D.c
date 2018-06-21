@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "vector2D.h"
 
-UpdateStack *init_update_stack(uint16_t y, uint16_t x) {
+UpdateStack *init_update_stack(unsigned y, unsigned x) {
 	UpdateStack *update = malloc(sizeof(UpdateStack));
 	update->vector2D = NULL;
 	update->grid = init_vector2D_grid(y, x);
@@ -11,13 +11,13 @@ UpdateStack *init_update_stack(uint16_t y, uint16_t x) {
 	return update;
 }
 
-void free_update_stack(UpdateStack *update, uint16_t y, uint16_t x) {
+void free_update_stack(UpdateStack *update, unsigned y, unsigned x) {
 	free(update->vector2D);
 	free_vector2D_grid(update->grid, y, x);
 	free(update);
 }
 
-char **init_vector2D_grid(uint16_t y, uint16_t x) {
+char **init_vector2D_grid(unsigned y, unsigned x) {
 	char **grid = calloc(y, sizeof(char *));
 	for (int i = 0; i < y; i++) {
 		grid[i] = calloc(x, sizeof(char));
@@ -25,7 +25,7 @@ char **init_vector2D_grid(uint16_t y, uint16_t x) {
 	return grid;
 }
 
-void free_vector2D_grid(char **grid, uint16_t y, uint16_t x) {
+void free_vector2D_grid(char **grid, unsigned y, unsigned x) {
 	for (int i = 0; i < y; i++) {
 		free(grid[i]);
 	}

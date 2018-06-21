@@ -10,7 +10,7 @@ typedef struct Stage{
 	Scene *currentScene;
 } Stage;
 
-Stage *init_stage(void);
+Stage *init_stage(void *backstage);
 void free_stage(Stage *stage);
 void scene_change(Stage *stage, short newSc);
 void stage_exit(Stage *stage);

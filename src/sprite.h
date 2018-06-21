@@ -8,8 +8,8 @@ typedef int (*Button)(struct Props *, short y, short x);
 typedef int (*Hover)(struct Props *, char start, short y, short x);
 
 typedef struct Sprite {
-	uint16_t colourDepth, iconDepth, buttonDepth, hoverDepth;
-	uint16_t colourMaxDepth, iconMaxDepth, buttonMaxDepth, hoverMaxDepth;
+	unsigned colourDepth, iconDepth, buttonDepth, hoverDepth;
+	unsigned colourMaxDepth, iconMaxDepth, buttonMaxDepth, hoverMaxDepth;
 	Colour *colour;
 	char (*icon)[3];
 	Button *button;

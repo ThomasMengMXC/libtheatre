@@ -27,7 +27,7 @@ void free_screen(Screen *scr) {
 }
 
 int draw_screen(Screen *scr) {
-	uint16_t y, x, update;
+	unsigned y, x, update;
 	Vector2D vector;
 	update = 0;
 	while (scr->update->depth > 0) {
@@ -44,7 +44,7 @@ int draw_screen(Screen *scr) {
 }
 
 void clear_screen(Screen *scr) {
-	for (uint16_t layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
+	for (unsigned layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
 		clear_layer(scr->layer[layerDepth - 1]);
 	}
 }
@@ -58,7 +58,7 @@ void resize_screen(Screen *scr) {
 	if (cursor->yPos > scr->yLength) cursor->yPos = scr->yLength - 1;
 	if (cursor->xPos > scr->xLength) cursor->xPos = scr->xLength - 1;
 	scr->update = init_update_stack(scr->yLength, scr->xLength);
-	for (uint16_t layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
+	for (unsigned layerDepth = scr->depth; layerDepth > 0; layerDepth--) {
 		layer = scr->layer[layerDepth - 1];
 		layer->update = scr->update;
 		if (layer->fillSize) resize_layer(layer, scr->yLength, scr->xLength);
@@ -125,12 +125,12 @@ Button get_button(Screen *scr, short y, short x) {
 
 // Returns 1 if nothing is activated, 0 otherwise
 Hover get_hover(Screen *scr, short y, short x) {
-	uint16_t hoverLayer = scr->depth;
+	unsigned hoverLayer = scr->depth;
 	while (hoverLayer) {
 		Layer *lyr = scr->layer[hoverLayer - 1];
 		hoverLayer--;
-		uint16_t yRelative = y - lyr->yOffset;
-		uint16_t xRelative = x - lyr->xOffset;
+		unsigned yRelative = y - lyr->yOffset;
+		unsigned xRelative = x - lyr->xOffset;
 		if (lyr->visibility == 0 ||
 				yRelative < 0 || yRelative >= lyr->yLength ||
 				xRelative < 0 || xRelative >= lyr->xLength) {
@@ -149,7 +149,7 @@ static void paint_colour(Screen *scr, short y, short x) {
 	float g0 = 0, g1 = 1;
 	float b0 = 0, b1 = 1;
 	Colour col, *colour;
-	uint8_t colourDepth = 0;
+	unsigned colourDepth = 0;
 	while (layerDepth && r1 + g1 + b1 > 0.0001) {
 		Layer *lyr = scr->layer[layerDepth - 1];
 		layerDepth--;

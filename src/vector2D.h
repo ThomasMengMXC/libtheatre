@@ -3,21 +3,21 @@
 #include <stdint.h>
 
 typedef struct Vector2D {
-	uint16_t y, x;
+	unsigned y, x;
 } Vector2D;
 
 typedef struct UpdateStack {
 	Vector2D *vector2D;
-	uint16_t depth, maxDepth;
-	uint16_t yMax, xMax;
+	unsigned depth, maxDepth;
+	unsigned yMax, xMax;
 	char **grid;
 } UpdateStack;
 
-UpdateStack *init_update_stack(uint16_t y, uint16_t x);
-void free_update_stack(UpdateStack *update, uint16_t y, uint16_t x);
+UpdateStack *init_update_stack(unsigned y, unsigned x);
+void free_update_stack(UpdateStack *update, unsigned y, unsigned x);
 
-char **init_vector2D_grid(uint16_t y, uint16_t x);
-void free_vector2D_grid(char **grid, uint16_t y, uint16_t x);
+char **init_vector2D_grid(unsigned y, unsigned x);
+void free_vector2D_grid(char **grid, unsigned y, unsigned x);
 
 void vector2D_push(UpdateStack *update, Vector2D vector);
 Vector2D vector2D_pop(UpdateStack *update);
