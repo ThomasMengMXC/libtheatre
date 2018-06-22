@@ -12,26 +12,6 @@ void free_props(Props *props) {
 	free(props);
 }
 
-void mv_cursor_relative(Props *props, short y, short x) {
-	Cursor *cursor = props->screen->cursor;
-	if (cursor->yPos + y >= props->screen->yLength
-			|| cursor->yPos + y < 0) return;
-	if (cursor->xPos + x >= props->screen->xLength
-			|| cursor->xPos + x < 0) return;
-	cursor->yPos += y;
-	cursor->xPos += x;
-}
-
-void mv_cursor_absolute(Props *props, short y, short x) {
-	Cursor *cursor = props->screen->cursor;
-	if (cursor->yPos + y >= props->screen->yLength
-			|| cursor->yPos + y < 0) return;
-	if (cursor->xPos + x >= props->screen->xLength
-			|| cursor->xPos + x < 0) return;
-	cursor->yPos = y;
-	cursor->xPos = x;
-}
-
 int activate_button(Props *props, short y, short x) {
 	Button button = get_button(props->screen, y, x);
 	if (button == NULL) return 0;

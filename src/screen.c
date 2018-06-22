@@ -193,3 +193,23 @@ static void draw_icon(Screen *scr, short y, short x) {
 		mvaddnstr(y, x * 2, "  ", 2);
 	}
 }
+
+void mv_cursor_relative(Screen *screen, short y, short x) {
+	Cursor *cursor = screen->cursor;
+	if (cursor->yPos + y >= screen->yLength
+			|| cursor->yPos + y < 0) return;
+	if (cursor->xPos + x >= screen->xLength
+			|| cursor->xPos + x < 0) return;
+	cursor->yPos += y;
+	cursor->xPos += x;
+}
+
+void mv_cursor_absolute(Screen *screen, short y, short x) {
+	Cursor *cursor = screen->cursor;
+	if (cursor->yPos + y >= screen->yLength
+			|| cursor->yPos + y < 0) return;
+	if (cursor->xPos + x >= screen->xLength
+			|| cursor->xPos + x < 0) return;
+	cursor->yPos = y;
+	cursor->xPos = x;
+}

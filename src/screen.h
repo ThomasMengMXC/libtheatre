@@ -28,4 +28,7 @@ Layer *remove_layer_from_scr(Screen *scr);
 Button get_button(Screen *scr, short y, short x);
 Hover get_hover(Screen *scr, short y, short x);
 
+void mv_cursor_relative(Screen *screen, short y, short x);
+void mv_cursor_absolute(Screen *screen, short y, short x);
+
 #endif
