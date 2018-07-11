@@ -1,17 +1,11 @@
-#include <signal.h>
-#include <time.h>
+#include <cstdlib>
+#include <csignal>
+#include <ctime>
 
 #include "play.h"
 
 static void segfault(int signo);
 static int init_ncurses(void);
-
-// left as an exercise for the reader :^)
-void init_theatre(void) {
-	signal(SIGSEGV, segfault);
-	init_ncurses();
-	return;
-}
 
 static void segfault(int signo) {
 	endwin();
@@ -33,6 +27,14 @@ static int init_ncurses(void) {
 	timeout(0); // 60fps baby
 	keypad(stdscr, TRUE);
 	return 0;
+}
+
+extern "C" {
+// left as an exercise for the reader :^)
+void init_theatre(void) {
+	signal(SIGSEGV, segfault);
+	init_ncurses();
+	return;
 }
 
 int enact_play(Stage *stage) {
@@ -62,4 +64,5 @@ int enact_play(Stage *stage) {
 
 void finale(void) {
 	endwin();
+}
 }

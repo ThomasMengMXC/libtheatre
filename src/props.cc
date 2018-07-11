@@ -1,7 +1,7 @@
 #include "props.h"
 
 Props *init_props(void) {
-	Props *props = malloc(sizeof(Props));
+	Props *props = new Props();
 	props->data = NULL;
 	props->screen = NULL;
 	props->backstage = NULL;
@@ -9,7 +9,7 @@ Props *init_props(void) {
 }
 
 void free_props(Props *props) {
-	free(props);
+	delete props;
 }
 
 int activate_button(Props *props, short y, short x) {

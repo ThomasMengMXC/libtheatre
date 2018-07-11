@@ -1,9 +1,9 @@
 DIRECTORY = $(HOME)
-CFLAGS = -Wall -pedantic -g -std=c11 -fPIC -O3
+CFLAGS = -Wall -pedantic -g -std=gnu++2a -fPIC -O3
 LFLAGS = -lncurses
-CC = gcc
-SOURCES = $(wildcard *.c)
-OBJECTS = $(SOURCES:.c=.o)
+CC = g++
+SOURCES = $(wildcard *.cc)
+OBJECTS = $(SOURCES:.cc=.o)
 
 all: libtheatre.so
 
@@ -18,7 +18,7 @@ analyse:
 libtheatre.so: $(OBJECTS)
 	$(CC) -shared *.o $(LFLAGS) -o libtheatre.so
 
-%.o : %.c %.h
+%.o : %.cc %.h
 	$(CC) $(CFLAGS) -c $<
 
 clean:

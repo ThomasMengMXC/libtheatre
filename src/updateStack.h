@@ -1,25 +1,26 @@
 #ifndef VECTOR2D_H
 #define VECTOR2D_H
-#include <stdint.h>
 
 typedef struct Vector2D {
 	unsigned y, x;
 } Vector2D;
 
 typedef struct UpdateStack {
-	Vector2D *vector2D;
-	unsigned depth, maxDepth;
+	void *stack;
 	unsigned yMax, xMax;
 	char **grid;
 } UpdateStack;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 UpdateStack *init_update_stack(unsigned y, unsigned x);
 void free_update_stack(UpdateStack *update, unsigned y, unsigned x);
 
-char **init_vector2D_grid(unsigned y, unsigned x);
-void free_vector2D_grid(char **grid, unsigned y, unsigned x);
-
-void vector2D_push(UpdateStack *update, Vector2D vector);
+void vector2D_push(UpdateStack *update, Vector2D pos);
 Vector2D vector2D_pop(UpdateStack *update);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

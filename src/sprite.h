@@ -8,15 +8,20 @@ typedef int (*Button)(struct Props *, short y, short x);
 typedef int (*Hover)(struct Props *, char start, short y, short x);
 
 typedef struct Sprite {
-	unsigned colourDepth, iconDepth, buttonDepth, hoverDepth;
-	unsigned colourMaxDepth, iconMaxDepth, buttonMaxDepth, hoverMaxDepth;
-	Colour *colour;
-	char (*icon)[3];
-	Button *button;
-	Hover *hover;
+	void *colour; // all of these are void pointers to c++ stacks
+	void *icon;
+	void *button;
+	void *hover;
+	void *attr;
 } Sprite;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 Sprite **init_sprite(short yLength, short xLength);
 void free_sprite(Sprite **sprite, short yLength, short xLength);
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -7,7 +7,7 @@
 typedef struct Props {
 	void *data;
 	Screen *screen;
-	void **backstage;
+	void *backstage;
 } Props;
 
 typedef void (*UpdateFn)(Props *props);
