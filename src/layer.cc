@@ -1,6 +1,3 @@
-extern "C" {
-#include <curses.h>
-}
 #include <cstring>
 #include <climits>
 #include <utility>
@@ -200,7 +197,8 @@ void append_attr_to_layer(Layer *layer, unsigned y, unsigned x, attr_t attr) {
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
 	auto vector = (std::vector<attr_t> *) sprite->attr;
-	vector->back() |= attr;
+	if (!vector->empty())
+		vector->back() |= attr;
 }
 
 void truncate_attr_from_layer(Layer *layer, unsigned y, unsigned x,
@@ -210,7 +208,8 @@ void truncate_attr_from_layer(Layer *layer, unsigned y, unsigned x,
 		return;
 	Sprite *sprite = &(layer->sprite[y][x]);
 	auto vector = (std::vector<attr_t> *) sprite->attr;
-	vector->back() &= ~attr;
+	if (!vector->empty())
+		vector->back() &= ~attr;
 }
 
 void layer_swap(Layer **layer1, Layer **layer2) {

@@ -1,6 +1,9 @@
 #ifndef LAYER_H
 #define LAYER_H
 
+extern "C" {
+#include <curses.h>
+}
 #include "sprite.h"
 #include "updateStack.h"
 
