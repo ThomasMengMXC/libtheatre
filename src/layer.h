@@ -40,6 +40,12 @@ void remove_button_from_layer(Layer *layer, unsigned y, unsigned x);
 void add_hover_to_layer(Layer *layer, unsigned y, unsigned x, Hover hover);
 void remove_hover_from_layer(Layer *layer, unsigned y, unsigned x);
 
+void add_attr_to_layer(Layer *layer, unsigned y, unsigned x, attr_t attr);
+void remove_attr_from_layer(Layer *layer, unsigned y, unsigned x);
+void append_attr_to_layer(Layer *layer, unsigned y, unsigned x, attr_t attr);
+void truncate_attr_from_layer(Layer *layer, unsigned y, unsigned x,
+		attr_t attr);
+
 // Misc-----------------------
 void layer_swap(Layer **layer1, Layer **layer2);
 void layer_memory_swap(Layer *layer1, Layer *layer2);

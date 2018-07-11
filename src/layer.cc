@@ -174,6 +174,45 @@ void remove_hover_from_layer(Layer *layer, unsigned y, unsigned x) {
 	vector->pop_back();
 }
 
+void add_attr_to_layer(Layer *layer, unsigned y, unsigned x, attr_t attr) {
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+	Sprite *sprite = &(layer->sprite[y][x]);
+	auto vector = (std::vector<attr_t> *) sprite->attr;
+	vector->push_back(attr);
+}
+
+void remove_attr_from_layer(Layer *layer, unsigned y, unsigned x) {
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength)
+		return;
+	Sprite *sprite = &(layer->sprite[y][x]);
+	auto vector = (std::vector<attr_t> *) sprite->attr;
+	vector->pop_back();
+}
+
+void append_attr_to_layer(Layer *layer, unsigned y, unsigned x, attr_t attr) {
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength) {
+		return;
+	}
+	Sprite *sprite = &(layer->sprite[y][x]);
+	auto vector = (std::vector<attr_t> *) sprite->attr;
+	vector->back() |= attr;
+}
+
+void truncate_attr_from_layer(Layer *layer, unsigned y, unsigned x,
+		attr_t attr) {
+	if (	y < 0 || y >= layer->yLength ||
+			x < 0 || x >= layer->xLength)
+		return;
+	Sprite *sprite = &(layer->sprite[y][x]);
+	auto vector = (std::vector<attr_t> *) sprite->attr;
+	vector->back() &= ~attr;
+}
+
 void layer_swap(Layer **layer1, Layer **layer2) {
 	void *swap;
 	swap = *layer1;

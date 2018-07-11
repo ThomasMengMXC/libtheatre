@@ -8,6 +8,7 @@ extern "C" {
 #include "screen.h"
 
 static void paint_colour(Screen *scr, short y, short x);
+static void set_attr(Screen *scr, short y, short x);
 static void draw_icon(Screen *scr, short y, short x);
 
 extern "C" {
@@ -45,6 +46,8 @@ int draw_screen(Screen *scr) {
 		y = vector.y; x = vector.x;
 
 		paint_colour(scr, y, x);
+
+		set_attr(scr, y, x);
 
 		draw_icon(scr, y, x);
 	}
@@ -182,6 +185,25 @@ static void paint_colour(Screen *scr, short y, short x) {
 		}
 	}
 	attron(COLOR_PAIR(rgb_to_term256(r0, g0, b0) + 1));
+}
+
+static void set_attr(Screen *scr, short y, short x) {
+	auto layers = (std::vector<Layer *> *) scr->layer;
+	for (short layerDepth = layers->size(); layerDepth > 0; layerDepth--) {
+		Layer *layer = layers->at(layerDepth - 1);
+		long yRelative = y - layer->yOffset;
+		long xRelative = x - layer->xOffset;
+		if (layer->visibility == 0 ||
+				yRelative < 0 || yRelative >= layer->yLength ||
+				xRelative < 0 || xRelative >= layer->xLength)
+			continue;
+		Sprite *sprite = &(layer->sprite[yRelative][xRelative]);
+		auto attrs = (std::vector<attr_t> *) sprite->attr;
+		if (attrs->empty())
+			continue;
+		attron(attrs->back());
+		break;
+	}
 }
 
 static void draw_icon(Screen *scr, short y, short x) {
