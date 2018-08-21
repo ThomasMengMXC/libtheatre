@@ -57,10 +57,9 @@ void free_layer(Layer *layer) {
 void refresh_layer(Layer *layer) {
 	for (unsigned y = 0; y < layer->yLength; y++) {
 		for (unsigned x = 0; x < layer->xLength; x++) {
-			Vector2D pos = {
-				.y = y + layer->yOffset,
-				.x = x + layer->xOffset
-			};
+			Vector2D pos;
+			pos.y = y + layer->yOffset;
+			pos.x = x + layer->xOffset;
 			vector2D_push(layer->update, pos);
 		}
 	}
@@ -76,7 +75,9 @@ void add_colour_to_layer(Layer *layer, unsigned y, unsigned x, Colour colour) {
 	Sprite *sprite = &(layer->sprite[y][x]);
 	auto vector = (std::vector<Colour> *) sprite->colour;
 	vector->push_back(colour);
-	Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+	Vector2D pos;
+	pos.y = y + layer->yOffset;
+	pos.x = x + layer->xOffset;
 	vector2D_push(layer->update, pos);
 }
 
@@ -88,7 +89,9 @@ void remove_colour_from_layer(Layer *layer, unsigned y, unsigned x) {
 	auto vector = (std::vector<Colour> *) sprite->colour;
 	if (!vector->empty()) {
 		vector->pop_back();
-		Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+		Vector2D pos;
+		pos.y = y + layer->yOffset;
+		pos.x = x + layer->xOffset;
 		vector2D_push(layer->update, pos);
 	}
 }
@@ -104,7 +107,9 @@ void add_icon_to_layer(Layer *layer, unsigned y, unsigned x, char *icon, size_t 
 		Sprite *sprite = &(layer->sprite[y][x]);
 		auto vector = (std::vector<std::array<char, 3>> *) sprite->icon;
 		vector->push_back(std::array<char, 3>());
-		Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+		Vector2D pos;
+		pos.y = y + layer->yOffset;
+		pos.x = x + layer->xOffset;
 		vector2D_push(layer->update, pos);
 		if (i + 1 == cells && n % 2) {
 			vector->back()[0] = (icon + i * 2)[0];
@@ -127,7 +132,9 @@ void remove_icon_from_layer(Layer *layer, unsigned y, unsigned x, size_t n) {
 		auto vector = (std::vector<std::array<char, 3>> *) sprite->icon;
 		if (!vector->empty()) {
 			vector->pop_back();
-			Vector2D pos = {.y = y + layer->yOffset, .x = x + layer->xOffset};
+			Vector2D pos;
+			pos.y = y + layer->yOffset;
+			pos.x = x + layer->xOffset;
 			vector2D_push(layer->update, pos);
 		}
 		x++;

@@ -1,5 +1,5 @@
-DIRECTORY = $(HOME)
-CFLAGS = -Wall -pedantic -g -std=gnu++2a -fPIC -O3
+DIRECTORY = $(HOME)/usr
+CFLAGS = -Wall -pedantic -g -std=gnu++11 -fPIC -O3
 LFLAGS = -lncurses
 CC = g++
 SOURCES = $(wildcard *.cc)
