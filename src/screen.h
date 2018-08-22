@@ -25,7 +25,6 @@ void resize_screen(Screen *scr);
 
 Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 		short yLength, short xLength);
-Layer *remove_layer_from_scr(Screen *scr);
 
 Button get_button(Screen *scr, short y, short x);
 Hover get_hover(Screen *scr, short y, short x);

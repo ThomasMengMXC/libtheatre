@@ -10,6 +10,7 @@ extern "C" {
 static void paint_colour(Screen *scr, short y, short x);
 static void set_attr(Screen *scr, short y, short x);
 static void draw_icon(Screen *scr, short y, short x);
+static Layer *remove_layer_from_scr(Screen *scr);
 
 extern "C" {
 Screen *init_screen(short yLength, short xLength) {
@@ -103,14 +104,6 @@ Layer *add_layer_to_scr(Screen *scr, short yOffset, short xOffset,
 			yLength, xLength));
 	layers->back()->update = scr->update;
 	return layers->back();
-}
-
-Layer *remove_layer_from_scr(Screen *scr) {
-	auto layers = (std::vector<Layer *> *) scr->layer;
-	Layer *oldPtr = layers->back(); // should probably remove this
-	free_layer(layers->back());
-	layers->pop_back();
-	return oldPtr;
 }
 
 // Returns 1 if nothing is activated, 0 otherwise
@@ -228,4 +221,12 @@ static void draw_icon(Screen *scr, short y, short x) {
 	if (!drawn) {
 		mvaddnstr(y, x * 2, "  ", 2);
 	}
+}
+
+static Layer *remove_layer_from_scr(Screen *scr) {
+	auto layers = (std::vector<Layer *> *) scr->layer;
+	Layer *oldPtr = layers->back(); // should probably remove this
+	free_layer(layers->back());
+	layers->pop_back();
+	return oldPtr;
 }

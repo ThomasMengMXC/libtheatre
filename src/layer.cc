@@ -96,7 +96,8 @@ void remove_colour_from_layer(Layer *layer, unsigned y, unsigned x) {
 	}
 }
 
-void add_icon_to_layer(Layer *layer, unsigned y, unsigned x, char *icon, size_t n) {
+void add_icon_to_layer(Layer *layer, unsigned y, unsigned x,
+		const char *icon, size_t n) {
 	unsigned cells = (n % 2 ? n + 1 : n) >> 1;
 	if (	y < 0 || y >= layer->yLength ||
 			x < 0 || x >= layer->xLength)

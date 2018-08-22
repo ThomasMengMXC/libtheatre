@@ -34,7 +34,8 @@ void refresh_layer(Layer *layer);
 void add_colour_to_layer(Layer *layer, unsigned y, unsigned x, Colour colour);
 void remove_colour_from_layer(Layer *layer, unsigned y, unsigned x);
 
-void add_icon_to_layer(Layer *layer, unsigned y, unsigned x, char *icon, size_t n);
+void add_icon_to_layer(Layer *layer, unsigned y, unsigned x,
+		const char *icon, size_t n);
 void remove_icon_from_layer(Layer *layer, unsigned y, unsigned x, size_t n);
 
 void add_button_to_layer(Layer *layer, unsigned y, unsigned x, Button button);
