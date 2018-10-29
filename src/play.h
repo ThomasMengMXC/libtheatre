@@ -4,14 +4,8 @@
 
 #include "stage.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 void init_theatre(void);
 int enact_play(Stage *stage);
 void finale(void);
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -1,9 +1,9 @@
 DIRECTORY = $(HOME)/usr
-CFLAGS = -Wall -pedantic -g -std=gnu++11 -fPIC -O3
+CFLAGS = -Wall -pedantic -g -std=c11 -fPIC -O3
 LFLAGS = -lncurses
-CC = g++
-SOURCES = $(wildcard *.cc)
-OBJECTS = $(SOURCES:.cc=.o)
+CC = gcc
+SOURCES = $(wildcard *.c)
+OBJECTS = $(SOURCES:.c=.o)
 
 all: libtheatre.so
 

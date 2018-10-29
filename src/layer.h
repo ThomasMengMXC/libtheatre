@@ -1,9 +1,7 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-extern "C" {
 #include <curses.h>
-}
 #include "sprite.h"
 #include "updateStack.h"
 
@@ -16,9 +14,6 @@ typedef struct Layer {
 	UpdateStack *update;
 } Layer;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 Layer *init_layer(char fillSize, short yOffset, short xOffset,
 		unsigned yLength, unsigned xLength);
 void free_layer(Layer *layer);
@@ -53,8 +48,5 @@ void truncate_attr_from_layer(Layer *layer, unsigned y, unsigned x,
 // Misc-----------------------
 void layer_swap(Layer **layer1, Layer **layer2);
 void layer_memory_swap(Layer *layer1, Layer *layer2);
-#ifdef __cplusplus
-}
-#endif
 
 #endif
