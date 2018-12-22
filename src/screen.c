@@ -14,7 +14,7 @@ Screen *init_screen(short yLength, short xLength) {
 	if (xLength == 0)
 		xLength = (getmaxx(stdscr) | COLS) / 2;
 	scr->yLength = yLength; scr->xLength = xLength;
-	scr->layers = init_uVec("Layers", sizeof(Layer *));
+	scr->layers = init_uVec(sizeof(Layer *));
 	scr->update = init_update_stack(yLength, xLength);
 	scr->cursor = init_cursor();
 	return scr;
@@ -32,7 +32,7 @@ void free_screen(Screen *scr) {
 int draw_screen(Screen *scr) {
 	unsigned y, x, update;
 	uVec *stack = scr->update->stack;
-	Vector2D vector;
+	Coordinate vector;
 	update = 0;
 	while (stack->length != 0) {
 		update = 1;

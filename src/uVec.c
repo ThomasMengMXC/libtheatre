@@ -3,10 +3,8 @@
 #include <stdint.h>
 #include "uVec.h"
 
-uVec *init_uVec(char *name, unsigned unitSize) {
+uVec *init_uVec(unsigned unitSize) {
 	uVec *u = malloc(sizeof(uVec));
-	memset(u->name, 0, sizeof(u->name));
-	memcpy(u->name, name, 20);
 	u->unitSize = unitSize;
 	u->length = 0;
 	u->maxLength = 1;
@@ -20,7 +18,6 @@ void free_uVec(uVec *uVec) {
 }
 
 
-#include <stdio.h>
 void uVec_push(uVec *uVec, void *unit) {
 	uVec->length++;
 	if (uVec->length >= uVec->maxLength) {

@@ -54,7 +54,7 @@ void free_layer(Layer *layer) {
 void refresh_layer(Layer *layer) {
 	for (unsigned y = 0; y < layer->yLength; y++) {
 		for (unsigned x = 0; x < layer->xLength; x++) {
-			Vector2D pos;
+			Coordinate pos;
 			pos.y = y + layer->yOffset;
 			pos.x = x + layer->xOffset;
 			vector2D_push(layer->update, pos);
@@ -71,7 +71,7 @@ void add_colour_to_layer(Layer *layer, unsigned y, unsigned x, Colour colour) {
 	}
 	Sprite *sprite = &(layer->sprite[y][x]);
 	uVec_push(sprite->colour, &colour);
-	Vector2D pos;
+	Coordinate pos;
 	pos.y = y + layer->yOffset;
 	pos.x = x + layer->xOffset;
 	vector2D_push(layer->update, pos);
@@ -84,7 +84,7 @@ void remove_colour_from_layer(Layer *layer, unsigned y, unsigned x) {
 	Sprite *sprite = &(layer->sprite[y][x]);
 	if (sprite->colour->length != 0) {
 		uVec_pop(sprite->colour);
-		Vector2D pos;
+		Coordinate pos;
 		pos.y = y + layer->yOffset;
 		pos.x = x + layer->xOffset;
 		vector2D_push(layer->update, pos);
@@ -111,7 +111,7 @@ void add_icon_to_layer(Layer *layer, unsigned y, unsigned x,
 		subicon[2] = '\0';
 		Sprite *sprite = &(layer->sprite[y][x]);
 		uVec_push(sprite->icon, subicon);
-		Vector2D pos;
+		Coordinate pos;
 		pos.y = y + layer->yOffset;
 		pos.x = x + layer->xOffset;
 		vector2D_push(layer->update, pos);
@@ -127,7 +127,7 @@ void remove_icon_from_layer(Layer *layer, unsigned y, unsigned x, size_t n) {
 		Sprite *sprite = &(layer->sprite[y][x]);
 		if (sprite->icon->length != 0) {
 			uVec_pop(sprite->icon);
-			Vector2D pos;
+			Coordinate pos;
 			pos.y = y + layer->yOffset;
 			pos.x = x + layer->xOffset;
 			vector2D_push(layer->update, pos);

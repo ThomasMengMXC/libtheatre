@@ -4,7 +4,7 @@
 Stage *init_stage(void *backstage) {
 	Stage *stage = malloc(sizeof(Stage));
 	stage->backstage = backstage;
-	stage->scenes = init_uVec("Stage", sizeof(Scene *));
+	stage->scenes = init_uVec(sizeof(Scene *));
 	stage->currentScene = NULL;
 	return stage;
 }

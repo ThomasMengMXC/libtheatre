@@ -6,7 +6,7 @@ static void free_char_grid(char **grid, unsigned y, unsigned x);
 
 UpdateStack *init_update_stack(unsigned y, unsigned x) {
 	UpdateStack *update = malloc(sizeof(UpdateStack));
-	update->stack = init_uVec("Update", sizeof(Vector2D));
+	update->stack = init_uVec(sizeof(Coordinate));
 	update->grid = init_char_grid(y, x);
 	update->yMax = y; update->xMax = x;
 	return update;
@@ -18,7 +18,7 @@ void free_update_stack(UpdateStack *update, unsigned y, unsigned x) {
 	free(update);
 }
 
-void vector2D_push(UpdateStack *update, Vector2D vector) {
+void vector2D_push(UpdateStack *update, Coordinate vector) {
 	if (vector.y >= 0 && vector.y < update->yMax &&
 			vector.x >= 0 && vector.x < update->xMax &&
 			update->grid[vector.y][vector.x] == 0) {
@@ -27,11 +27,11 @@ void vector2D_push(UpdateStack *update, Vector2D vector) {
 	}
 }
 
-Vector2D vector2D_pop(UpdateStack *update) {
-	Vector2D retVal; retVal.y = -1; retVal.x = -1;
+Coordinate vector2D_pop(UpdateStack *update) {
+	Coordinate retVal; retVal.y = -1; retVal.x = -1;
 
 	if (update->stack->length != 0) {
-		retVal = *(Vector2D *) uVec_get_back(update->stack);
+		retVal = *(Coordinate *) uVec_get_back(update->stack);
 		uVec_pop(update->stack);
 		update->grid[retVal.y][retVal.x] = 0;
 	}
