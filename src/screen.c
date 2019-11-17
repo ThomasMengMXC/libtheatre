@@ -134,13 +134,14 @@ Hover get_hover(Screen *scr, short y, short x) {
 // STATIC -----------------
 static void paint_colour(Screen *scr, short y, short x) {
 	unsigned layerDepth = scr->layers->length;
-	float r0 = 0, r1 = 1;
-	float g0 = 0, g1 = 1;
-	float b0 = 0, b1 = 1;
+	float block = 1.0;
+	float r0 = 0;
+	float g0 = 0;
+	float b0 = 0;
 	Colour col;
 	uVec *colour;
 	unsigned colourDepth = 0;
-	while (layerDepth && r1 + g1 + b1 > 0.0001) {
+	while (layerDepth) {
 		Layer *layer = *(Layer **) uVec_get(scr->layers, layerDepth - 1);
 		layerDepth--;
 		long yRelative = y - layer->yOffset;
@@ -152,11 +153,12 @@ static void paint_colour(Screen *scr, short y, short x) {
 		Sprite *sprite = &(layer->sprite[yRelative][xRelative]);
 		colour = sprite->colour;
 		colourDepth = colour->length;
-		while (colourDepth && r1 + g1 + b1 > 0.0001) {
+		while (colourDepth) {
 			col = *(Colour *) uVec_get(colour, colourDepth - 1);
-			r0 += col.r * r1 * col.a / 255; r1 = r1 * (255 - col.a) / 255;
-			g0 += col.g * g1 * col.a / 255; g1 = g1 * (255 - col.a) / 255;
-			b0 += col.b * b1 * col.a / 255; b1 = b1 * (255 - col.a) / 255;
+			r0 += col.r * block * col.a / 255;
+			g0 += col.g * block * col.a / 255;
+			b0 += col.b * block * col.a / 255;
+			block = block * (255 - col.a) / 255;
 			colourDepth--;
 		}
 	}
